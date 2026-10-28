@@ -77,18 +77,27 @@ jobs:
           # Use the actual EI-25 artwork committed with the web app, not the old placeholder vector.
           from pathlib import Path
           import shutil
+          from PIL import Image
           res = Path("android/app/src/main/res")
           source = Path("icons/icon-512.png")
           if not source.exists():
               raise SystemExit("Missing icons/icon-512.png")
-          # Remove adaptive placeholder icons: Android 8+ prefers these over raster launcher icons.
+          # Make near-white background pixels transparent in the launcher icon.
+          im = Image.open(source).convert("RGBA")
+          px = im.load()
+          for y in range(im.height):
+              for x in range(im.width):
+                  r, g, b, a = px[x, y]
+                  if r > 242 and g > 242 and b > 242:
+                      px[x, y] = (r, g, b, 0)
+          source = Path("launcher-transparent.png")
+          im.save(source)
           shutil.rmtree(res / "mipmap-anydpi-v26", ignore_errors=True)
           for density in ("mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"):
               target = res / ("mipmap-" + density)
               target.mkdir(parents=True, exist_ok=True)
               for name in ("ic_launcher.png", "ic_launcher_round.png"):
                   shutil.copyfile(source, target / name)
-          # Also provide the same artwork for older Android resource fallbacks.
           g = "android/app/build.gradle"
           t = open(g, encoding="utf-8").read()
           t, n = re.subn(r"versionCode\s+\d+", "versionCode " + os.environ.get("RUN_NUMBER", "1"), t, count=1)
