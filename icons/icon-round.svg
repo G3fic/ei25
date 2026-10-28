@@ -47,10 +47,10 @@
     </g>
   </g>
   <g filter="url(#shadow)">
-    <circle cx="363" cy="111" r="55" fill="#edf5ff" stroke="#3c9cff" stroke-width="8"/>
-    <circle cx="363" cy="111" r="43" fill="#fff"/>
-    <path d="M363 81v31l22 13" fill="none" stroke="#2474e8" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="363" cy="111" r="4.5" fill="#2474e8"/>
+    <circle cx="377" cy="92" r="49" fill="#edf5ff" stroke="#3c9cff" stroke-width="8"/>
+    <circle cx="377" cy="92" r="38" fill="#fff"/>
+    <path d="M377 64v28l18 11" fill="none" stroke="#2474e8" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="377" cy="92" r="4.5" fill="#2474e8"/>
   </g>
   <g filter="url(#shadow)" transform="translate(54 68) rotate(-12 78 47)">
     <path d="M8 46L79 12l72 34-72 35z" fill="#eaf4ff" stroke="#5ab4ff" stroke-width="5" stroke-linejoin="round"/>
