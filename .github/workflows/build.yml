@@ -1,0 +1,128 @@
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Подготовка проекта Capacitor
+        run: |
+          mkdir -p www
+          test -f index.html || { echo "Нет файла index.html в корне репозитория"; exit 1; }
+          cp index.html www/index.html
+          cat > package.json <<'EOF'
+          {
+            "name": "ei25-schedule",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "@capacitor/core": "^6.0.0",
+              "@capacitor/android": "^6.0.0",
+              "@capacitor/local-notifications": "^6.0.0",
+              "@capacitor/filesystem": "^6.0.0",
+              "@capacitor/share": "^6.0.0"
+            },
+            "devDependencies": {
+              "@capacitor/cli": "^6.0.0"
+            }
+          }
+          EOF
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.ei25.schedule",
+            "appName": "Расписание ЭИ-25",
+            "webDir": "www",
+            "plugins": {
+              "LocalNotifications": {
+                "smallIcon": "ic_stat_icon",
+                "iconColor": "#2F80ED"
+              }
+            }
+          }
+          EOF
+          npm install --no-audit --no-fund
+          npx cap add android
+
+      - name: Разрешения, иконка, номер версии
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          man = "android/app/src/main/AndroidManifest.xml"
+          s = open(man, encoding="utf-8").read()
+          perms = ["POST_NOTIFICATIONS", "SCHEDULE_EXACT_ALARM", "USE_EXACT_ALARM", "RECEIVE_BOOT_COMPLETED", "VIBRATE", "WAKE_LOCK"]
+          add = "".join('    <uses-permission android:name="android.permission.%s" />\n' % p for p in perms)
+          assert "</manifest>" in s
+          s = s.replace("</manifest>", add + "</manifest>")
+          open(man, "w", encoding="utf-8").write(s)
+
+          res = "android/app/src/main/res/"
+          os.makedirs(res + "drawable", exist_ok=True)
+          os.makedirs(res + "mipmap-anydpi-v26", exist_ok=True)
+          V = '<?xml version="1.0" encoding="utf-8"?>\n<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="%(w)sdp" android:height="%(w)sdp" android:viewportWidth="%(w)s" android:viewportHeight="%(w)s">\n%(body)s</vector>\n'
+          def vec(name, w, body):
+              open(res + "drawable/" + name + ".xml", "w", encoding="utf-8").write(V % {"w": w, "body": body})
+          vec("ei_icon_bg", 108, '  <path android:fillColor="#1F3864" android:pathData="M0,0h108v108h-108z"/>\n')
+          vec("ei_icon_fg", 108,
+            '  <path android:fillColor="#FFFFFF" android:pathData="M30,32h48v46h-48z"/>\n'
+            '  <path android:fillColor="#4CAF70" android:pathData="M30,32h48v13h-48z"/>\n'
+            '  <path android:fillColor="#FFFFFF" android:pathData="M39,26h5v11h-5z"/>\n'
+            '  <path android:fillColor="#FFFFFF" android:pathData="M64,26h5v11h-5z"/>\n'
+            '  <path android:fillColor="#1F3864" android:pathData="M37,53h10v8h-10z M52,53h10v8h-10z M67,53h6v8h-6z M37,66h10v8h-10z M52,66h10v8h-10z"/>\n')
+          vec("ic_stat_icon", 24,
+            '  <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd" android:pathData="M19,3h-1V1h-2v2H8V1H6v2H5C3.89,3 3,3.9 3,5v14c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2V5C21,3.9 20.1,3 19,3z M19,19H5V8h14V19z"/>\n')
+          AD = '<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n    <background android:drawable="@drawable/ei_icon_bg"/>\n    <foreground android:drawable="@drawable/ei_icon_fg"/>\n</adaptive-icon>\n'
+          for n in ("ic_launcher", "ic_launcher_round"):
+              open(res + "mipmap-anydpi-v26/" + n + ".xml", "w", encoding="utf-8").write(AD)
+
+          g = "android/app/build.gradle"
+          t = open(g, encoding="utf-8").read()
+          t, n = re.subn(r"versionCode\s+\d+", "versionCode " + os.environ.get("RUN_NUMBER", "1"), t, count=1)
+          open(g, "w", encoding="utf-8").write(t)
+          print("versionCode patched:", n)
+          PY
+
+      - name: Постоянный ключ подписи (чтобы обновления ставились поверх)
+        run: |
+          mkdir -p ~/.android
+          echo "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" | base64 -d > ~/.android/debug.keystore
+
+      - name: Синхронизация
+        run: npx cap sync android
+
+      - name: Сборка APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Файл в артефакты
+        uses: actions/upload-artifact@v4
+        with:
+          name: Raspisanie-EI-25-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Файл в релиз
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk Raspisanie-EI-25.apk
+          gh release create "build-${{ github.run_number }}" Raspisanie-EI-25.apk --title "Сборка ${{ github.run_number }}" --notes "Установочный файл расписания ЭИ-25" --target "${{ github.sha }}"
