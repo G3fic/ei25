@@ -89,7 +89,7 @@ jobs:
               for name in ("ic_launcher.png", "ic_launcher_round.png"):
                   shutil.copyfile(source, target / name)
           # Also provide the same artwork for older Android resource fallbacks.
-                    g = "android/app/build.gradle"
+          g = "android/app/build.gradle"
           t = open(g, encoding="utf-8").read()
           t, n = re.subn(r"versionCode\s+\d+", "versionCode " + os.environ.get("RUN_NUMBER", "1"), t, count=1)
           open(g, "w", encoding="utf-8").write(t)
