@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#101d32">
 <title>Расписание ЭИ-25</title>
 <style>
 :root{--bg:#f4f5f7;--card:#fff;--tx:#1b1f24;--mu:#4b5565;--bd:#dfe3e8;--ac:#d92d20;--lec:#e8f0fe;--pr:#e6f6ec;--lab:#fff1e0;--oth:#eef0f3;--btn:#e4e7ec;--on:#1f3864;--onx:#fff;
@@ -57,7 +61,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .cr{display:grid;grid-template-columns:32px repeat(7,1fr);gap:3px;margin-bottom:3px}
 .ch{font-size:12px;color:var(--mu);text-align:center}
 .cw{font-size:13px;font-weight:700;color:var(--mu);display:flex;align-items:center;justify-content:center;border-radius:6px}
-.cd{text-align:center;padding:8px 0;border-radius:6px;font-size:15px}
+.cd{text-align:center;padding:8px 0;border-radius:6px;font-size:15px;position:relative}
 .cr.o .cd,.cr.o .cw{background:var(--lec)}
 .cr.e .cd,.cr.e .cw{background:var(--oth)}
 .cr .cd.x{background:transparent}
@@ -71,7 +75,7 @@ html{scroll-behavior:smooth}
 .ge{transition:opacity .3s ease,box-shadow .3s ease,background .3s ease}
 .g button,#mc,#mg,.set button{transition:background .2s ease,color .2s ease,box-shadow .2s ease,transform .12s ease}
 .g button:active,#mc:active,#mg:active,.set button:active{transform:scale(.95)}
-.wkl{transition:opacity .2s ease}.wd.sel{box-shadow:inset 3px 0 0 var(--on);padding-left:7px}.cd.pick{box-shadow:inset 0 0 0 2px var(--on);font-weight:700;color:var(--tx)}.cw[data-week]{cursor:pointer;user-select:none}
+.wkl{transition:opacity .2s ease}.cw[data-week]{cursor:pointer;user-select:none}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 .ge{position:relative;overflow:visible;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
@@ -85,7 +89,9 @@ html{scroll-behavior:smooth}
 .tl{font-size:12px;line-height:1.2;color:var(--mu);font-variant-numeric:tabular-nums}
 .tl .cdn{font-weight:700;color:var(--tx)}
 .cd small{display:block;font-size:10.5px;line-height:1;margin-top:2px;color:var(--ac);font-weight:700}
-.cr.o .cd.mis,.cr.e .cd.mis{background:rgba(217,45,32,.22);cursor:pointer}
+.cr.o .cd.hasabs,.cr.e .cd.hasabs{cursor:pointer}
+.cd .abnum{position:absolute;right:2px;top:0;font-size:12px;line-height:1.1;font-weight:800;color:#d92d20}
+.cd .hwflag{display:block;font-size:8px;line-height:1.1;margin-top:2px;color:#d99a00;font-weight:900}
 .mb{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .22s ease,visibility 0s .22s}
 .mb.open{opacity:1;visibility:visible;transition:opacity .22s ease}
 .ms{width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:var(--card);color:var(--tx);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;transform:translateY(30px);transition:transform .28s ease}
@@ -110,8 +116,22 @@ html{scroll-behavior:smooth}
 .dl.sure,.dl2.sure{background:var(--ac);color:#fff}
 .abr{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--bd);margin-top:6px;padding-top:12px;font-size:16px}
 .abr small{color:var(--mu)}.abr .bt{margin-left:6px}
-#pv{position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center}
-#pv.open{display:flex}#pv img{max-width:100%;max-height:100%}
+#pv{position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.94);display:none;align-items:stretch;justify-content:stretch;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#pv.open{display:flex}
+.pved{display:flex;flex-direction:column;width:100%;height:100%;min-height:0;color:#fff}
+.paintbar{flex:0 0 auto;display:flex;flex-direction:column;gap:9px;padding:10px 10px 4px;box-sizing:border-box}
+.paintcolors{display:flex;align-items:center;justify-content:center;gap:11px;min-height:36px}
+.pcolor{width:32px;height:32px;flex:0 0 32px;padding:4px;border:2px solid rgba(255,255,255,.45);border-radius:50%;background:transparent;box-sizing:border-box}
+.pcolor span{display:block;width:100%;height:100%;border-radius:50%;background:var(--pc);border:1px solid rgba(255,255,255,.35);box-sizing:border-box}
+.pcolor.active{outline:2px solid #fff;outline-offset:2px;border-color:transparent}
+.paintactions{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap}
+.paintactions button{border:0;border-radius:9px;min-height:40px;padding:0 12px;background:#343941;color:#fff;font-size:14px;font-weight:600;touch-action:manipulation}
+.paintactions #psave{background:#245db2}
+.paintactions button:disabled{opacity:.4}
+.paint-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:6px 10px;box-sizing:border-box}
+#paint-canvas{display:block;max-width:100%;max-height:100%;touch-action:none;user-select:none;-webkit-user-select:none;border-radius:3px;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.paint-tip{flex:0 0 auto;margin:0;padding:2px 10px 8px;text-align:center;color:#cbd0d8;font-size:12px;line-height:1.35}
+@media(max-width:380px){.paintcolors{gap:8px}.pcolor{width:29px;height:29px;flex-basis:29px}.paintactions button{min-height:38px;padding:0 9px;font-size:13px}}
 #toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(10px);z-index:50;max-width:calc(100% - 32px);background:var(--on);color:var(--onx);border-radius:12px;padding:10px 14px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease}
 #toast.on{opacity:1;transform:translateX(-50%)}
 html.lk,html.lk2{overflow:hidden}
@@ -204,7 +224,27 @@ html.lk,html.lk2{overflow:hidden}
 <div id="cal"></div><div id="hw"></div>
 <div id="nav"><div class="r2"><button id="mc" aria-label="Календарь">📅</button><button id="mh" aria-label="Домашние задания"><span class="bdg" id="mhb"></span>📝</button><div class="g"><button id="mo">Нечёт</button><button id="me">Чёт</button></div><button id="mg" aria-label="Настройки">⚙</button></div></div>
 <div class="mb" id="mb"><div class="ms" id="ms"></div></div>
-<div id="pv"><img alt=""></div>
+<div id="pv" role="dialog" aria-modal="true" aria-label="Рисование на фото">
+  <div class="pved">
+    <div class="paintbar">
+      <div class="paintcolors" role="group" aria-label="Цвет линии">
+        <button class="pcolor active" type="button" data-color="#ff3b30" aria-label="Красный" title="Красный" style="--pc:#ff3b30"><span></span></button>
+        <button class="pcolor" type="button" data-color="#ffd60a" aria-label="Жёлтый" title="Жёлтый" style="--pc:#ffd60a"><span></span></button>
+        <button class="pcolor" type="button" data-color="#34c759" aria-label="Зелёный" title="Зелёный" style="--pc:#34c759"><span></span></button>
+        <button class="pcolor" type="button" data-color="#0a84ff" aria-label="Синий" title="Синий" style="--pc:#0a84ff"><span></span></button>
+        <button class="pcolor" type="button" data-color="#ffffff" aria-label="Белый" title="Белый" style="--pc:#ffffff"><span></span></button>
+        <button class="pcolor" type="button" data-color="#111111" aria-label="Чёрный" title="Чёрный" style="--pc:#111111"><span></span></button>
+      </div>
+      <div class="paintactions">
+        <button id="pundo" type="button" disabled>↶ Отменить линию</button>
+        <button id="psave" type="button">Сохранить</button>
+        <button id="pcancel" type="button">Отмена</button>
+      </div>
+    </div>
+    <div class="paint-stage" id="paint-stage"><canvas id="paint-canvas" aria-label="Рисуйте пальцем или мышью по фото"></canvas></div>
+    <p class="paint-tip">Рисуйте пальцем по фото. «Отменить линию» убирает последнее движение.</p>
+  </div>
+</div>
 <div id="dpop"></div>
 <div id="toast"></div>
 <div id="iback" aria-hidden="true"><section class="imodal" role="dialog" aria-modal="true" aria-labelledby="ititle">
@@ -258,7 +298,7 @@ function weekHTML(vn){var now=new Date(),n=wkOf(now),view=par(vn);
   var same=vn==n,today=dow(now),h='';
   for(var d=0;d<5;d++){
     var dd=dt(vn,d);
-    h+='<div class="wd'+(same&&d==today?' td':'')+(SELECTED_DAY===iso(dd)?' sel':'')+'" id="wd'+d+'">'+DN[d]+'<small>'+dd.getDate()+' '+MON[dd.getMonth()]+'</small>'+(same&&d==today?'<span class="tg">сегодня</span>':'')+'</div><div class="dg">';
+    h+='<div class="wd'+(same&&d==today?' td':'')+'" id="wd'+d+'">'+DN[d]+'<small>'+dd.getDate()+' '+MON[dd.getMonth()]+'</small>'+(same&&d==today?'<span class="tg">сегодня</span>':'')+'</div><div class="dg">';
     var g={},cov={};
     D.filter(function(e){return e.w==view&&e.d==d}).forEach(function(e){(g[e.a]=g[e.a]||[]).push(e)});
     Object.keys(g).forEach(function(k){var es=g[k].sort(function(x,y){return x.s<y.s?-1:1});es.forEach(function(e,i){var cs=es.length==1?[2,3]:[i==0?2:3];for(var r=e.a+1;r<=e.b;r++)cs.forEach(function(c){cov[r+'_'+c]=1})})});
@@ -278,7 +318,7 @@ function renderCal(){
   for(w=st0;w<=LAST;w++){if(w%2)o++;else e++}
   var a=dt(LAST,0),b=dt(LAST,6),
       h='<div class="csum">'+(st0>LAST?'<b>Семестр завершён</b>':'<b>'+(LAST-st0+1)+' нед.</b> до конца семестра<small>нечётных: '+o+' · чётных: '+e+'</small>')+'<small>Сейчас неделя '+n+' · '+(par(n)=='o'?'нечётная':'чётная')+' · последняя неделя семестра — '+a.getDate()+'–'+b.getDate()+' '+MON[b.getMonth()]+'</small></div>'
-     +attCard(AS)+'<div class="lg"><span><i style="background:var(--lec)"></i>нечётная</span><span><i style="background:var(--oth)"></i>чётная</span><span><i style="background:rgba(217,45,32,.3)"></i>пропуск</span></div>',
+     +attCard(AS)+'<div class="lg"><span><i style="background:var(--lec)"></i>нечётная</span><span><i style="background:var(--oth)"></i>чётная</span><span><i style="background:transparent;border-color:#d92d20"></i>часы пропуска</span><span><i style="background:transparent;border-color:var(--ac)"></i>ДЗ</span></div>',
       MN=['Сентябрь','Октябрь','Ноябрь','Декабрь'],HD=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
   for(var m=8;m<=11;m++){
     var f=new Date(2026,m,1),l=new Date(2026,m+1,0),r=new Date(2026,m,1-dow(f));
@@ -287,8 +327,8 @@ function renderCal(){
       var wn=wkOf(r);
       if(wn<=LAST){
         h+='<div class="cr '+par(wn)+(wn==n?' cur':'')+'"><span class="cw" data-week="'+wn+'" title="Выбрать неделю">'+wn+'</span>';
-        for(var i=0;i<7;i++){var d=new Date(r.getFullYear(),r.getMonth(),r.getDate()+i),inm=d.getMonth()==m,td=d.toDateString()==now.toDateString(),mh=inm?(AS.bd[iso(d)]||0):0;
-          h+='<span class="cd'+(inm?'':' x')+(i>=5?' we':'')+(td&&inm?' tdy':'')+(SELECTED_DAY===iso(d)&&inm?' pick':'')+(mh?' mis':'')+'"'+(mh?' data-d="'+iso(d)+'"':'')+(inm&&i<5&&wn>=1&&wn<=LAST?' data-day="'+iso(d)+'" title="Открыть '+HD[i].toLowerCase()+'"':'')+'>'+(inm?d.getDate()+'<span class="wdn">'+HD[i].toLowerCase()+'</span>':'')+'</span>'}
+        for(var i=0;i<7;i++){var d=new Date(r.getFullYear(),r.getMonth(),r.getDate()+i),inm=d.getMonth()==m,td=d.toDateString()==now.toDateString(),ds=iso(d),mh=inm?(AS.bd[ds]||0):0,hw=inm&&dayHasHw(d);
+          h+='<span class="cd'+(inm?'':' x')+(i>=5?' we':'')+(td&&inm?' tdy':'')+(mh?' hasabs':'')+'"'+(mh?' data-d="'+ds+'"':'')+(inm&&i<5&&wn>=1&&wn<=LAST?' data-day="'+ds+'" title="Открыть '+HD[i].toLowerCase()+'"':'')+'>'+(inm?d.getDate()+(mh?'<span class="abnum">'+mh+'</span>':'')+'<span class="wdn">'+HD[i].toLowerCase()+'</span>'+(hw?'<span class="hwflag">ДЗ</span>':''):'')+'</span>'}
         h+='</div>'}
       r=new Date(r.getFullYear(),r.getMonth(),r.getDate()+7)}
     h+='</div>'}
@@ -330,7 +370,7 @@ var DB_READY=new Promise(function(resolve){try{var q=indexedDB.open('ei25',1);q.
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(x){}
 function saveNM(){try{localStorage.setItem('nm',JSON.stringify(NM))}catch(x){}}
 function saveAB(){try{localStorage.setItem('abs',JSON.stringify(AB))}catch(x){}}
-function dbGet(k){return new Promise(function(res){if(!DB){res(MEM.files[k]);return}try{var r=DB.transaction('files').objectStore('files').get(k);r.onsuccess=function(){res(r.result||MEM.files[k])};r.onerror=function(){res(MEM.files[k])}}catch(x){res(MEM.files[k])}})}
+function dbGet(k){return new Promise(function(res){function fallback(){try{return MEM.files[k]||d2b(BOOTSTRAP_BACKUP&&BOOTSTRAP_BACKUP.files&&BOOTSTRAP_BACKUP.files[k])}catch(x){return MEM.files[k]}}if(!DB){res(fallback());return}try{var r=DB.transaction('files').objectStore('files').get(k);r.onsuccess=function(){res(r.result||fallback())};r.onerror=function(){res(fallback())}}catch(x){res(fallback())}})}
 function dbPut(k,v){return new Promise(function(res){function mem(){MEM.files[k]=v;toast('Хранилище недоступно: вложение сохранится только до перезагрузки');res()}if(!DB){mem();return}try{var t=DB.transaction('files','readwrite');t.objectStore('files').put(v,k);t.oncomplete=function(){res()};t.onerror=t.onabort=mem}catch(x){mem()}})}
 function dbDel(k){delete MEM.files[k];try{DB&&DB.transaction('files','readwrite').objectStore('files').delete(k)}catch(x){}}
 async function hydrateEmbeddedPhotos(){
@@ -351,6 +391,7 @@ function cap(e){return 2*(e.b-e.a+1)}
 function absH(k){return AB[k]?AB[k].h:0}
 function setAbs(e,d,h){var k=K(e,d);if(h<=0)delete AB[k];else AB[k]={h:h,d:iso(d),t:e.t,s:base(e)};saveAB()}
 function absSum(){var r={tot:0,bs:{},bd:{},bl:{}};Object.keys(AB).forEach(function(k){var a=AB[k];r.tot+=a.h;r.bs[a.s]=(r.bs[a.s]||0)+a.h;r.bd[a.d]=(r.bd[a.d]||0)+a.h;(r.bl[a.d]=r.bl[a.d]||[]).push({k:k,h:a.h,t:a.t})});return r}
+function dayHasHw(d){var n=wkOf(d),dw=dow(d);return D.some(function(e){return e.w==par(n)&&e.d==dw&&act(e,n)&&mine(e)&&hasHw(NM[K(e,d)])})}
 function attCard(A){
   if(!A.tot)return '<div class="csum"><b>Пропусков нет</b><small>Зажмите пару на 1 секунду — запишется +2 ч пропуска</small></div>';
   var ks=Object.keys(A.bs).sort(function(a,b){return A.bs[b]-A.bs[a]});
@@ -365,7 +406,7 @@ function showDay(ds){var b=$('dpop');if(!b)return;var d=pd(ds),L=absSum().bl[ds]
   b.innerHTML='<div class="mh"><b>Пропуски · '+d.getDate()+' '+MON[d.getMonth()]+'</b></div>'+L.map(function(a){var o=occ(a.k),sub='';if(o){var p1=P[o.e.a-1],p2=P[o.e.b-1];sub=(o.e.a==o.e.b?o.e.a+' пара':o.e.a+'–'+o.e.b+' пары')+' · '+p1[0]+':'+z(p1[1])+'–'+p2[2]+':'+z(p2[3])+(o.e.r?' · '+o.e.r:'')+(o.e.s?' · '+o.e.s:'')}
     return '<div class="dr"><div class="di"><b>'+a.t+'</b><small>'+sub+'</small><small>Пропущено: '+a.h+' ч</small></div><button class="dl2" data-ab="del" data-k="'+a.k+'">Убрать</button></div>'}).join('');
   b.classList.add('open')}
-$('cal').addEventListener('click',function(ev){var w=ev.target.closest('.cw[data-week]');if(w){selectWeek(+w.getAttribute('data-week'));return}var c=ev.target.closest('.cd[data-day]');if(c){selectDate(c.getAttribute('data-day'),c.classList.contains('mis'));return}$('dpop').classList.remove('open')});
+$('cal').addEventListener('click',function(ev){var w=ev.target.closest('.cw[data-week]');if(w){selectWeek(+w.getAttribute('data-week'));return}var c=ev.target.closest('.cd[data-day]');if(c){selectDate(c.getAttribute('data-day'),c.classList.contains('hasabs'));return}$('dpop').classList.remove('open')});
 $('dpop').addEventListener('click',function(ev){if(ev.target.closest('[data-a="dclose"]'))this.classList.remove('open')});
 $('dpop').addEventListener('contextmenu',function(ev){ev.preventDefault()});
 /* ===== удержание 2 сек = +2 ч пропуска; двойное нажатие = заметки ===== */
@@ -427,6 +468,83 @@ function shrink(f){return new Promise(function(res){var u=URL.createObjectURL(f)
 function clrHw(b){
   if(DEL!=='hw'){DEL='hw';b.textContent='Точно убрать?';b.classList.add('sure');clearTimeout(DT);DT=setTimeout(function(){DEL=null;b.textContent='Убрать ДЗ';b.classList.remove('sure')},2500);return}
   DEL=null;clearTimeout(DT);clearTimeout(TXT);var n=NM[M.k];if(n)n.it.forEach(function(x){dbDel(x.id)});delete NM[M.k];$('mt').value='';saveNM();listAtt();b.textContent='Убрать ДЗ';b.classList.remove('sure');render();toast('ДЗ убрано')}
+function fitPaintCanvas(){
+  if(!PAINT_IMG||!$('pv').classList.contains('open'))return;
+  var c=$('paint-canvas'),stage=$('paint-stage');
+  if(!c||!stage||!c.width||!c.height)return;
+  var w=Math.max(1,stage.clientWidth-2),h=Math.max(1,stage.clientHeight-2),scale=Math.min(w/c.width,h/c.height,1);
+  c.style.width=Math.max(1,Math.round(c.width*scale))+'px';
+  c.style.height=Math.max(1,Math.round(c.height*scale))+'px';
+}
+function redrawPaint(){
+  var c=$('paint-canvas');if(!c||!PAINT_CTX||!PAINT_IMG)return;
+  PAINT_CTX.clearRect(0,0,c.width,c.height);PAINT_CTX.drawImage(PAINT_IMG,0,0,c.width,c.height);
+  PAINT_STROKES.forEach(function(st){
+    if(!st.pts.length)return;
+    var lw=Math.max(4,Math.min(c.width,c.height)*0.0045);
+    PAINT_CTX.lineCap='round';PAINT_CTX.lineJoin='round';PAINT_CTX.strokeStyle=st.color;PAINT_CTX.fillStyle=st.color;PAINT_CTX.lineWidth=lw;
+    if(st.pts.length===1){PAINT_CTX.beginPath();PAINT_CTX.arc(st.pts[0].x,st.pts[0].y,lw/2,0,Math.PI*2);PAINT_CTX.fill();return}
+    PAINT_CTX.beginPath();PAINT_CTX.moveTo(st.pts[0].x,st.pts[0].y);
+    for(var i=1;i<st.pts.length;i++)PAINT_CTX.lineTo(st.pts[i].x,st.pts[i].y);
+    PAINT_CTX.stroke();
+  });
+}
+function updatePaintUndo(){var b=$('pundo');if(b)b.disabled=!PAINT_STROKES.length}
+function closePaint(){
+  $('pv').classList.remove('open');
+  if(PAINT_URL){try{URL.revokeObjectURL(PAINT_URL)}catch(e){}}
+  PAINT_ID=null;PAINT_IMG=null;PAINT_URL=null;PAINT_STROKES=[];PAINT_ACTIVE=null;PAINT_CTX=null;
+  var c=$('paint-canvas');if(c){c.style.width='';c.style.height='';c.width=1;c.height=1}
+}
+async function openPaint(id){
+  var blob=await dbGet(id);
+  if(!blob){toast('Не удалось открыть фото');return}
+  closePaint();PAINT_ID=id;PAINT_COLOR='#ff3b30';PAINT_STROKES=[];PAINT_ACTIVE=null;
+  [].forEach.call($('pv').querySelectorAll('[data-color]'),function(b){b.classList.toggle('active',b.getAttribute('data-color')===PAINT_COLOR)});
+  updatePaintUndo();$('pv').classList.add('open');
+  PAINT_IMG=new Image();PAINT_URL=URL.createObjectURL(blob);
+  PAINT_IMG.onload=function(){
+    if(!PAINT_ID)return;
+    var c=$('paint-canvas');c.width=PAINT_IMG.naturalWidth||PAINT_IMG.width;c.height=PAINT_IMG.naturalHeight||PAINT_IMG.height;
+    PAINT_CTX=c.getContext('2d');fitPaintCanvas();redrawPaint();
+  };
+  PAINT_IMG.onerror=function(){closePaint();toast('Не удалось открыть изображение')};
+  PAINT_IMG.src=PAINT_URL;
+}
+async function savePaint(){
+  if(!PAINT_ID||!PAINT_CTX)return;
+  var id=PAINT_ID,c=$('paint-canvas'),save=$('psave');save.disabled=true;save.textContent='Сохраняю…';
+  try{
+    var blob=await new Promise(function(resolve){c.toBlob(resolve,'image/jpeg',0.92)});
+    if(!blob)throw new Error('Не удалось подготовить изображение');
+    await dbPut(id,blob);closePaint();if(M)listAtt();render();toast('Рисунок сохранён в фото');
+  }catch(e){toast('Не удалось сохранить рисунок');}
+  finally{if(save){save.disabled=false;save.textContent='Сохранить'}}
+}
+(function setupPaintEditor(){
+  var c=$('paint-canvas');
+  function point(ev){var r=c.getBoundingClientRect();return{x:(ev.clientX-r.left)*(c.width/Math.max(1,r.width)),y:(ev.clientY-r.top)*(c.height/Math.max(1,r.height))}}
+  c.addEventListener('pointerdown',function(ev){
+    if(!PAINT_ID||!PAINT_CTX)return;ev.preventDefault();
+    PAINT_ACTIVE={color:PAINT_COLOR,pts:[point(ev)],pointerId:ev.pointerId};PAINT_STROKES.push(PAINT_ACTIVE);
+    try{c.setPointerCapture(ev.pointerId)}catch(e){}redrawPaint();updatePaintUndo();
+  });
+  c.addEventListener('pointermove',function(ev){
+    if(!PAINT_ACTIVE||PAINT_ACTIVE.pointerId!==ev.pointerId)return;ev.preventDefault();
+    var p=point(ev),pts=PAINT_ACTIVE.pts,last=pts[pts.length-1];
+    if(!last||Math.abs(last.x-p.x)+Math.abs(last.y-p.y)>1){pts.push(p);redrawPaint()}
+  });
+  function endStroke(ev){if(PAINT_ACTIVE&&(!ev||PAINT_ACTIVE.pointerId===ev.pointerId))PAINT_ACTIVE=null}
+  c.addEventListener('pointerup',endStroke);c.addEventListener('pointercancel',endStroke);c.addEventListener('lostpointercapture',endStroke);
+  $('pv').addEventListener('click',function(ev){
+    var cb=ev.target.closest('[data-color]');
+    if(cb){PAINT_COLOR=cb.getAttribute('data-color');[].forEach.call($('pv').querySelectorAll('[data-color]'),function(b){b.classList.toggle('active',b===cb)});return}
+    if(ev.target.closest('#pundo')){if(PAINT_ACTIVE)PAINT_ACTIVE=null;if(PAINT_STROKES.length)PAINT_STROKES.pop();redrawPaint();updatePaintUndo();return}
+    if(ev.target.closest('#psave')){savePaint();return}
+    if(ev.target.closest('#pcancel')||ev.target===$('pv'))closePaint();
+  });
+  window.addEventListener('resize',fitPaintCanvas);
+})();
 $('ms').addEventListener('click',function(ev){
   var b=ev.target.closest('[data-a]');if(!b||!M)return;var a=b.getAttribute('data-a');
   if(a=='close')closeM();
@@ -434,10 +552,9 @@ $('ms').addEventListener('click',function(ev){
   else if(a=='del')delAtt(b);
   else if(a=='clr')clrHw(b);
   else if(a=='dn')togDn(b);
-  else if(a=='view'&&b.src){$('pv').firstChild.src=b.src;$('pv').classList.add('open')}});
+  else if(a=='view')openPaint(b.getAttribute('data-id'))});
 $('mb').addEventListener('click',function(ev){if(ev.target===this)closeM()});
-$('pv').addEventListener('click',function(){this.classList.remove('open')});
-document.addEventListener('keydown',function(ev){if(ev.key=='Escape'){if($('pv').classList.contains('open'))$('pv').classList.remove('open');else closeM()}});
+document.addEventListener('keydown',function(ev){if(ev.key=='Escape'){if($('pv').classList.contains('open'))closePaint();else closeM()}});
 document.addEventListener('visibilitychange',function(){if(!document.hidden){tick();updCd()}});
 
 /* ===== ДЗ: переносится на следующую такую же пару, когда эта прошла ===== */
@@ -459,6 +576,7 @@ function carry(f){if(M)return;var now=new Date(),ch=false,lm=null;
   if(ch){saveNM();render();if(lm)toast('ДЗ перенесено на пару '+lm.getDate()+' '+MON[lm.getMonth()])}}
 
 var CH=null;
+var PAINT_ID=null,PAINT_IMG=null,PAINT_URL=null,PAINT_COLOR='#ff3b30',PAINT_STROKES=[],PAINT_ACTIVE=null,PAINT_CTX=null;
 function cancelCh(){if(CH){clearTimeout(CH.t);CH.b.classList.remove('hold');CH=null;return true}return false}
 $('dpop').addEventListener('pointerdown',function(ev){var b=ev.target.closest('[data-ab]');if(!b)return;cancelCh();b.classList.add('hold');
   CH={b:b,t:setTimeout(function(){var k=b.getAttribute('data-k'),a=AB[k];CH=null;if(!a)return;var ds=a.d;delete AB[k];saveAB();vibe(40);var y=$('cal').scrollTop;renderCal();$('cal').scrollTop=y;showDay(ds);render()},1000)}});
@@ -666,7 +784,7 @@ function togDn(b){saveTxt(M.k,$('mt').value);var n=NM[M.k];if(!hasHw(n)){toast('
 $('hw').addEventListener('click',function(ev){
   var t=ev.target.closest('[data-t]');if(t){HWT=+t.getAttribute('data-t');renderHw();return}
   var b=ev.target.closest('[data-h]');if(!b)return;var a=b.getAttribute('data-h'),c=b.closest('.hc'),k=c&&c.getAttribute('data-k'),n=k&&NM[k];
-  if(a=='img'){if(b.src){$('pv').firstChild.src=b.src;$('pv').classList.add('open')}return}
+  if(a=='img'){openPaint(b.getAttribute('data-id'));return}
   if(!n)return;
   if(a=='dn'){if(n.dn)delete n.dn;else n.dn=true;saveNM();if(!n.dn)carry();render();renderHw();toast(n.dn?'Отмечено как сделанное':'Возвращено в список')}
   else if(a=='edit')openM(+b.getAttribute('data-i'),b.getAttribute('data-d'));
@@ -721,7 +839,7 @@ $('set').addEventListener('click',function(ev){var b=ev.target.closest('[data-th
 applyTh();drawTh();
 function closeCal(){$('dpop').classList.remove('open');$('cal').classList.remove('open');$('mc').className='';closeHw()}
 function selectDate(ds,showAbs){var d=pd(ds);SELECTED_DAY=iso(d);OFF=wkOf(d)-wkOf(new Date());closeCal();render();pop();setTimeout(function(){var idx=Math.max(0,Math.min(4,dow(d))),el=$('wd'+idx);if(el){var top=el.getBoundingClientRect().top+window.pageYOffset-62;window.scrollTo({top:Math.max(0,top),behavior:RM?'auto':'smooth'})}if(showAbs)showDay(ds)},80)}
-function selectWeek(n){selectDate(iso(dt(n,0)),false)}
+function selectWeek(n){OFF=n-wkOf(new Date());closeCal();render();pop()}
 function pop(){var w=$('wl');w.classList.remove('go');void w.offsetWidth;w.classList.add('go');setTimeout(function(){w.classList.remove('go')},900)}
 $('mc').onclick=function(){var c=$('cal');if(!c.classList.contains('open')){closeHw();renderCal();c.scrollTop=0;c.classList.add('open');$('mc').className='on'}else closeCal()};
 function setPar(p){closeCal();var n=wkOf(new Date()),hi=Math.max(LASTW,n),t=n+OFF;if(par(t)!=p)t=t>n?t-1:(t+1<=hi?t+1:t-1);OFF=t-n;render();pop()}
