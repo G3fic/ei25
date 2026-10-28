@@ -64,6 +64,7 @@ jobs:
         env:
           RUN_NUMBER: ${{ github.run_number }}
         run: |
+          python3 -m pip install --quiet pillow
           python3 - <<'PY'
           import os, re
           man = "android/app/src/main/AndroidManifest.xml"
