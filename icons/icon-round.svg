@@ -1,61 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#142b4b"/>
-      <stop offset="1" stop-color="#081426"/>
-    </linearGradient>
-    <linearGradient id="blue" x1="0" y1="0" x2="0.9" y2="1">
-      <stop offset="0" stop-color="#56b4ff"/>
-      <stop offset="1" stop-color="#2474e8"/>
-    </linearGradient>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#020817" flood-opacity=".35"/>
-    </filter>
-  </defs>
-  <circle cx="256" cy="256" r="250" fill="url(#bg)" stroke="#3597ff" stroke-width="8"/>
-  <circle cx="256" cy="256" r="235" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="2"/>
-  <g filter="url(#shadow)">
-    <rect x="91" y="135" width="330" height="288" rx="28" fill="#f7f9fd"/>
-    <path d="M91 163a28 28 0 0 1 28-28h274a28 28 0 0 1 28 28v66H91z" fill="url(#blue)"/>
-    <rect x="125" y="119" width="16" height="51" rx="8" fill="#dceeff" stroke="#f7fbff" stroke-width="4"/>
-    
-    <text x="256" y="202" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="800" fill="#fff" letter-spacing="1">ЭИ-25</text>
-    <g fill="#dfe7f3">
-      <rect x="119" y="250" width="76" height="64" rx="11"/>
-      <rect x="218" y="250" width="76" height="64" rx="11"/>
-      <rect x="317" y="250" width="76" height="64" rx="11"/>
-      <rect x="119" y="332" width="76" height="64" rx="11"/>
-      <rect x="218" y="332" width="76" height="64" rx="11"/>
-      <rect x="317" y="332" width="76" height="64" rx="11"/>
-    </g>
-    <g fill="#2c7de7">
-      <rect x="119" y="250" width="76" height="64" rx="11"/>
-      <rect x="317" y="332" width="76" height="64" rx="11"/>
-    </g>
-    <g fill="#fff" font-family="Arial, Helvetica, sans-serif" font-weight="700" text-anchor="middle">
-      <text x="157" y="291" font-size="32">25</text>
-      <text x="355" y="373" font-size="30">25</text>
-    </g>
-    <g stroke="#2c7de7" stroke-width="7" stroke-linecap="round" fill="none">
-      <path d="M236 279l13 13 25-28"/>
-      <path d="M137 358h40"/>
-      <path d="M236 358h40"/>
-      <path d="M236 378h26"/>
-      <path d="M335 274h40"/>
-      <path d="M335 293h24"/>
-    </g>
+  <rect width="512" height="512" fill="#142b4b"/>
+  <rect x="104" y="112" width="304" height="300" rx="34" fill="#ffffff"/>
+  <path d="M104 146a34 34 0 0 1 34-34h236a34 34 0 0 1 34 34v54H104z" fill="#2c7de7"/>
+  <rect x="168" y="86" width="24" height="66" rx="12" fill="#ffffff"/>
+  <rect x="320" y="86" width="24" height="66" rx="12" fill="#ffffff"/>
+  <g fill="#d9e8fb">
+    <rect x="145" y="232" width="58" height="48" rx="10"/>
+    <rect x="227" y="232" width="58" height="48" rx="10"/>
+    <rect x="309" y="232" width="58" height="48" rx="10"/>
+    <rect x="145" y="303" width="58" height="48" rx="10"/>
+    <rect x="227" y="303" width="58" height="48" rx="10"/>
+    <rect x="309" y="303" width="58" height="48" rx="10"/>
   </g>
-  <g filter="url(#shadow)">
-    <circle cx="377" cy="92" r="49" fill="#edf5ff" stroke="#3c9cff" stroke-width="8"/>
-    <circle cx="377" cy="92" r="38" fill="#fff"/>
-    <path d="M377 64v28l18 11" fill="none" stroke="#2474e8" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="377" cy="92" r="4.5" fill="#2474e8"/>
-  </g>
-  <g filter="url(#shadow)" transform="translate(54 68) rotate(-12 78 47)">
-    <path d="M8 46L79 12l72 34-72 35z" fill="#eaf4ff" stroke="#5ab4ff" stroke-width="5" stroke-linejoin="round"/>
-    <path d="M37 60v27c24 20 58 20 83 0V60L79 80z" fill="#f7fbff" stroke="#5ab4ff" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M151 46v37" stroke="#5ab4ff" stroke-width="6" stroke-linecap="round"/>
-    <circle cx="151" cy="88" r="8" fill="#5ab4ff"/>
-  </g>
+  <rect x="227" y="303" width="58" height="48" rx="10" fill="#2c7de7"/>
+  <path d="M241 327l12 11 20-23" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
