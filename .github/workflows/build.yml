@@ -64,7 +64,7 @@ jobs:
         env:
           RUN_NUMBER: ${{ github.run_number }}
         run: |
-          python3 -m pip install --quiet pillow
+          python3 -m pip install --quiet pillow cairosvg
           python3 - <<'PY'
           import os, re
           man = "android/app/src/main/AndroidManifest.xml"
@@ -75,65 +75,23 @@ jobs:
           s = s.replace("</manifest>", add + "</manifest>")
           open(man, "w", encoding="utf-8").write(s)
 
-          # Use the actual EI-25 artwork committed with the web app, not the old placeholder vector.
+          # Render the circular EI-25 artwork from the SVG source.
+          # The SVG already contains the transparent outside corners; do not add another circle behind it.
           from pathlib import Path
           import shutil
+          import cairosvg
           from PIL import Image
           res = Path("android/app/src/main/res")
-          source = Path("icons/icon-512.png")
-          if not source.exists():
-              raise SystemExit("Missing icons/icon-512.png")
-          # Preserve the full original artwork. Remove only near-white pixels connected to the image border,
-          # so white calendar pages, lettering highlights and clock face stay opaque.
-          im = Image.open(source).convert("RGBA")
-          w, h = im.size
-          pix = im.load()
-          from collections import deque
-          q = deque()
-          seen = bytearray(w * h)
-          def is_outer_bg(x, y):
-              r, g, b, a = pix[x, y]
-              return r >= 235 and g >= 235 and b >= 235 and a > 0
-          def seed(x, y):
-              i = y * w + x
-              if not seen[i] and is_outer_bg(x, y):
-                  seen[i] = 1
-                  q.append((x, y))
-          for x in range(w):
-              seed(x, 0)
-              seed(x, h - 1)
-          for y in range(h):
-              seed(0, y)
-              seed(w - 1, y)
-          while q:
-              x, y = q.popleft()
-              r, g, b, a = pix[x, y]
-              pix[x, y] = (r, g, b, 0)
-              for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
-                  if 0 <= nx < w and 0 <= ny < h:
-                      seed(nx, ny)
-          transparent_count = sum(1 for y in range(h) for x in range(w) if pix[x, y][3] == 0)
-          print(f"Transparent outer background pixels: {transparent_count}")
-          # Crop away transparent margins left by the white-background removal.
-          # Otherwise Android scales the whole 512x512 canvas and the visible logo looks tiny.
-          bbox = im.getchannel("A").getbbox()
-          if not bbox:
-              raise SystemExit("Icon became fully transparent")
-          im = im.crop(bbox)
-          # Render the artwork inside a true circular launcher icon.
-          # Use a blue circular background and keep the artwork inset so none of it is clipped.
-          from PIL import ImageDraw
-          art = im
-          art.thumbnail((420, 420), Image.Resampling.LANCZOS)
-          scale = 4
-          circle = Image.new("RGBA", (512 * scale, 512 * scale), (0, 0, 0, 0))
-          draw = ImageDraw.Draw(circle)
-          draw.ellipse((0, 0, 512 * scale - 1, 512 * scale - 1), fill=(47, 128, 237, 255))
-          circle = circle.resize((512, 512), Image.Resampling.LANCZOS)
-          circle.alpha_composite(art, ((512 - art.width) // 2, (512 - art.height) // 2))
-          im = circle
+          source_svg = Path("icons/icon-round.svg")
+          if not source_svg.exists():
+              raise SystemExit("Missing icons/icon-round.svg")
           source = Path("launcher-circular.png")
-          im.save(source)
+          cairosvg.svg2png(url=str(source_svg), write_to=str(source), output_width=512, output_height=512)
+          im = Image.open(source).convert("RGBA")
+          if im.size != (512, 512):
+              raise SystemExit("Generated launcher icon has unexpected dimensions")
+          if im.getpixel((0, 0))[3] != 0:
+              raise SystemExit("Launcher icon must have transparent corners")
 
           # Use correctly sized launcher bitmaps for each Android density.
           # The visible artwork fills the available canvas instead of retaining outer whitespace.
