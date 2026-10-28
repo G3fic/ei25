@@ -120,9 +120,19 @@ jobs:
           if not bbox:
               raise SystemExit("Icon became fully transparent")
           im = im.crop(bbox)
-          # The source artwork is square; resize the visible artwork to the full launcher canvas.
-          im = im.resize((512, 512), Image.Resampling.LANCZOS)
-          source = Path("launcher-transparent.png")
+          # Render the artwork inside a true circular launcher icon.
+          # Use a blue circular background and keep the artwork inset so none of it is clipped.
+          from PIL import ImageDraw
+          art = im
+          art.thumbnail((420, 420), Image.Resampling.LANCZOS)
+          scale = 4
+          circle = Image.new("RGBA", (512 * scale, 512 * scale), (0, 0, 0, 0))
+          draw = ImageDraw.Draw(circle)
+          draw.ellipse((0, 0, 512 * scale - 1, 512 * scale - 1), fill=(47, 128, 237, 255))
+          circle = circle.resize((512, 512), Image.Resampling.LANCZOS)
+          circle.alpha_composite(art, ((512 - art.width) // 2, (512 - art.height) // 2))
+          im = circle
+          source = Path("launcher-circular.png")
           im.save(source)
 
           # Use correctly sized launcher bitmaps for each Android density.
