@@ -19,7 +19,7 @@
     <rect x="91" y="135" width="330" height="288" rx="28" fill="#f7f9fd"/>
     <path d="M91 163a28 28 0 0 1 28-28h274a28 28 0 0 1 28 28v66H91z" fill="url(#blue)"/>
     <rect x="125" y="119" width="16" height="51" rx="8" fill="#dceeff" stroke="#f7fbff" stroke-width="4"/>
-    <rect x="371" y="119" width="16" height="51" rx="8" fill="#dceeff" stroke="#f7fbff" stroke-width="4"/>
+    
     <text x="256" y="202" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="800" fill="#fff" letter-spacing="1">ЭИ-25</text>
     <g fill="#dfe7f3">
       <rect x="119" y="250" width="76" height="64" rx="11"/>
