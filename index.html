@@ -299,15 +299,15 @@ function classStatusSync(f){
     if(slot>=0){
       for(var j=0;j<today.length;j++)if(today[j].a<=slot+1&&today[j].b>=slot+1){e=today[j];break}
     }
-    if(slot<0){
-      for(var k=0;k<P.length;k++){
-        var ns=new Date(day.getFullYear(),day.getMonth(),day.getDate(),P[k][0],P[k][1]);
-        if(ns<=now)continue;
-        for(var m=0;m<today.length;m++)if(today[m].a<=k+1&&today[m].b>=k+1){next={e:today[m],start:ns,slot:k};break}
-        if(next)break;
-      }
-    }
     if(slot<0||!e){
+      if(slot<0){
+        for(var k=0;k<P.length;k++){
+          var ns=new Date(day.getFullYear(),day.getMonth(),day.getDate(),P[k][0],P[k][1]);
+          if(ns<=now)continue;
+          for(var m=0;m<today.length;m++)if(today[m].a<=k+1&&today[m].b>=k+1){next={e:today[m],start:ns,slot:k};break}
+          if(next)break;
+        }
+      }
       if(!next){
         var future=today.filter(function(x){return st(x,day)>now}).sort(function(a,b){return st(a,day)-st(b,day)});
         if(future.length){var fs=st(future[0],day);if(fs.getTime()-now.getTime()<=90*60000)next={e:future[0],start:fs,slot:future[0].a-1}}
@@ -317,33 +317,39 @@ function classStatusSync(f){
         return;
       }
       var nk='next-'+D.indexOf(next.e)+'-'+next.start.getTime();
-      if(nk===_classStatusKey&&now.getTime()-_classStatusAt<30000)return;
+      if(nk===_classStatusKey&&now.getTime()-_classStatusAt<15000)return;
       _classStatusKey=nk;_classStatusAt=now.getTime();
       var wait=Math.max(0,Math.ceil((next.start.getTime()-now.getTime())/60000));
       cs.update({active:true,title:'Следующая пара: '+next.e.t,body:'Перемена · начало в '+hm(next.start)+(wait?' · через '+wait+' мин':''),progress:0,nextAt:next.start.getTime()});
       return;
     }
-    var key='slot-'+slot+'-'+D.indexOf(e);
-    if(key===_classStatusKey&&now.getTime()-_classStatusAt<30000)return;
-    _classStatusKey=key;_classStatusAt=now.getTime();
+
     var ps2=new Date(day.getFullYear(),day.getMonth(),day.getDate(),P[slot][0],P[slot][1]),
         pe2=new Date(day.getFullYear(),day.getMonth(),day.getDate(),P[slot][2],P[slot][3]),
-        total=Math.max(1,pe2.getTime()-ps2.getTime()),left=Math.max(0,pe2.getTime()-now.getTime()),
-        remaining=Math.max(0,Math.ceil(left/60000)),breakMs=5*60000,
-        breakStart=new Date(ps2.getTime()+Math.max(0,total-breakMs)/2),
+        total=Math.max(1,pe2.getTime()-ps2.getTime()),
+        breakMs=Math.min(5*60000,Math.floor(total/3)),
+        activeHalf=Math.max(1,(total-breakMs)/2),
+        breakStart=new Date(ps2.getTime()+activeHalf),
         breakEnd=new Date(breakStart.getTime()+breakMs),
         inBreak=now>=breakStart&&now<breakEnd,
-        effectiveTotal=Math.max(1,total-breakMs),
+        phase=now<breakStart?'first':(inBreak?'break':'second'),
         elapsed=now.getTime()-ps2.getTime(),
-        effectiveElapsed=elapsed-(now>=breakEnd?breakMs:now>=breakStart?now.getTime()-breakStart.getTime():0),
-        elapsedProgress=Math.max(0,Math.min(100,Math.floor(effectiveElapsed/effectiveTotal*100))),
+        progress;
+    if(phase==='first')progress=Math.floor(Math.max(0,Math.min(50,elapsed/activeHalf*50)));
+    else if(phase==='break')progress=50;
+    else progress=Math.floor(Math.max(50,Math.min(100,50+(now.getTime()-breakEnd.getTime())/activeHalf*50)));
+    var key='slot-'+slot+'-'+D.indexOf(e)+'-'+phase;
+    if(key===_classStatusKey&&now.getTime()-_classStatusAt<15000)return;
+    _classStatusKey=key;_classStatusAt=now.getTime();
+    var left=Math.max(0,pe2.getTime()-now.getTime()),
+        remaining=Math.max(0,Math.ceil(left/60000)),
         hours=Math.floor(remaining/60),mins=remaining%60,
         leftText=hours?hours+' ч '+mins+' мин':mins+' мин',
-        body='До '+z(P[slot][2])+':'+z(P[slot][3])+' · осталось '+leftText,
+        body='До '+hm(pe2)+' · осталось '+leftText,
         nextAt=breakStart.getTime();
     if(inBreak){body='Перемена 5 мин · до '+hm(breakEnd)+' · затем продолжение пары';nextAt=breakEnd.getTime()}
-    else if(now>=breakEnd)nextAt=pe2.getTime();
-    cs.update({active:true,title:e.t,body:body,progress:elapsedProgress,nextAt:nextAt});
+    else if(phase==='second')nextAt=pe2.getTime();
+    cs.update({active:true,title:e.t,body:body,progress:progress,nextAt:nextAt});
   }catch(x){}
 }
 function mark(e,dd){return INF.live.indexOf(e)>-1&&dd&&dd.toDateString()==new Date().toDateString()?' lv':''}
