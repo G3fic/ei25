@@ -335,7 +335,7 @@ function weekHTML(vn){var now=new Date(),n=wkOf(now),view=par(vn);
         var col=es.length==1?'2/4':(i==0?'2':'3'),dim=!act(e,vn)||!mine(e),
             m=e.t.match(/^(.*) (лекция|практика|лаба)$/),title=m?m[1]:e.t,kl=m?m[2].charAt(0).toUpperCase()+m[2].slice(1):'',
             cs=(kl?'<span class="c">'+kl+'</span>':'')+(e.s?'<span class="c">'+e.s+'</span>':'')+(e.wk?'<span class="c">нед. '+e.wk.map(function(x){return x==vn?'<u>'+x+'</u>':x}).join(', ')+'</span>':'')+(dim?'':badges(e,dd));
-        h+='<div class="ge '+e.k+(dim?' dim':'')+mark(e,dd)+'" style="grid-row:'+e.a+'/'+(e.b+1)+';grid-column:'+col+'" data-i="'+D.indexOf(e)+'" data-d="'+iso(dd)+'"'+(!mine(e)?' data-x="1"':(dim?' data-w="1"':''))+'><b>'+title+'</b>'+(cs?'<div class="cs">'+cs+'</div>':'')+'<div class="ft"><span>'+e.tc+'</span><span class="r">'+e.r+'</span></div>'+(mark(e,dd)?'<i class="tdot" data-s="'+st(e,dd).getTime()+'" data-e="'+en(e,dd).getTime()+'"></i>':'')+(mark(e,dd)?'<div class="tl">до конца <span class="cdn" data-end="'+en(e,dd).getTime()+'"></span></div>':'')+'</div>'})});
+        h+='<div class="ge '+e.k+(dim?' dim':'')+mark(e,dd)+'" style="grid-row:'+e.a+'/'+(e.b+1)+';grid-column:'+col+'" data-i="'+D.indexOf(e)+'" data-d="'+iso(dd)+'"'+(!mine(e)?' data-x="1"':(dim?' data-w="1"':''))+'><b>'+title+'</b>'+(cs?'<div class="cs">'+cs+'</div>':'')+'<div class="ft"><span>'+e.tc+'</span><span class="r">'+e.r+'</span></div>'+(mark(e,dd)?'<div class="tl">до конца <span class="cdn" data-end="'+en(e,dd).getTime()+'"></span></div>':'')+'</div>'})});
     h+='</div>'}
   return h}
 function renderCal(){
