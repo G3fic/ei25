@@ -294,8 +294,11 @@ function classStatusSync(f){
     var e=live[0],p2=P[e.b-1],start=st(e,now),end=en(e,now),
         total=Math.max(1,end.getTime()-start.getTime()),left=Math.max(0,end.getTime()-now.getTime()),
         remaining=Math.max(0,Math.ceil(left/60000)),progress=Math.max(0,Math.min(100,Math.ceil(left/total*100)));
-    var body='До '+z(p2[2])+':'+z(p2[3])+' · осталось '+remaining+' мин.';
-    cs.update({active:true,title:e.t,body:body,progress:progress});
+    var hours=Math.floor(remaining/60),mins=remaining%60,
+        leftText=hours?hours+' ч '+mins+' мин':mins+' мин',
+        elapsedProgress=Math.max(0,Math.min(100,Math.floor((1-left/total)*100)));
+    var body='До '+z(p2[2])+':'+z(p2[3])+' · осталось '+leftText;
+    cs.update({active:true,title:e.t,body:body,progress:elapsedProgress});
   }catch(x){}
 }
 function mark(e,dd){return INF.live.indexOf(e)>-1&&dd&&dd.toDateString()==new Date().toDateString()?' lv':''}
