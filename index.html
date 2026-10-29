@@ -305,7 +305,7 @@ function classStatusSync(f){
         leftText=hours?hours+' ч '+mins+' мин':mins+' мин',
         body='До '+z(p2[2])+':'+z(p2[3])+' · осталось '+leftText;
     if(inBreak)body='Перемена до '+z(breakEnd.getHours())+':'+z(breakEnd.getMinutes())+' · затем пара';
-    cs.update({active:true,title:e.t,body:body,progress:elapsedProgress});
+    cs.update({active:true,title:e.t,body:body,progress:elapsedProgress,nextAt:(inBreak?breakEnd:end).getTime()});
   }catch(x){}
 }
 function mark(e,dd){return INF.live.indexOf(e)>-1&&dd&&dd.toDateString()==new Date().toDateString()?' lv':''}
