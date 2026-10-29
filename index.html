@@ -281,7 +281,24 @@ function info(now){
   return r}
 function tick(){
   carry();var f=info(new Date()),key=f.live.map(function(e){return D.indexOf(e)}).join();
-  INF=f;if(key!==lastKey){lastKey=key;render()}}
+  INF=f;classStatusSync(f);if(key!==lastKey){lastKey=key;render()}}
+var _classStatusKey='';
+function classStatusSync(f){
+  try{
+    var cs=window.Capacitor&&(Capacitor.Plugins&&Capacitor.Plugins.ClassStatus);
+    if(!cs||!cs.update)return;
+    var now=new Date(),live=f.live||[],key=live.map(function(e){return D.indexOf(e)}).join(',');
+    if(key===_classStatusKey)return;_classStatusKey=key;
+    if(!live.length){cs.update({active:false});return}
+    var e=live[0],p1=P[e.a-1],p2=P[e.b-1];
+    var title=e.t+' · '+e.a+(e.a===e.b?' пара':'–'+e.b+' пары');
+    var body=z(p1[0])+':'+z(p1[1])+'–'+z(p2[2])+':'+z(p2[3])+
+      (e.r?' · '+e.r:'')+(e.tc?'\nПреподаватель: '+e.tc:'')+
+      (e.s?'\n'+e.s:'');
+    if(live.length>1)body+='\nТакже идёт: '+live.slice(1).map(function(x){return x.t+(x.r?' — '+x.r:'')}).join('; ');
+    cs.update({active:true,title:title,body:body});
+  }catch(x){}
+}
 function mark(e,dd){return INF.live.indexOf(e)>-1&&dd&&dd.toDateString()==new Date().toDateString()?' lv':''}
 function wcls(w){var L=INF.live[0];return L&&L.w==w?' hlv':''}
 function hdr(vn){var now=new Date(),n=wkOf(now),hi=Math.max(LASTW,n),a=dt(vn,0),b=dt(vn,4),vw=par(vn);
