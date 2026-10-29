@@ -102,7 +102,7 @@ jobs:
                   Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
                       .setSmallIcon(android.R.drawable.ic_menu_my_calendar)
                       .setContentTitle(title)
-                      .setContentText(body.replace('\n', ' · '))
+                      .setContentText(body.replace("\n", " · "))
                       .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                       .setCategory(NotificationCompat.CATEGORY_STATUS)
                       .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
