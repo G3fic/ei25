@@ -827,10 +827,10 @@ var mo=new MutationObserver(sync);mo.observe($('hw'),{attributes:true,attributeF
 /* ===== уведомления: работают в приложении Capacitor (APK), в браузере скрыты ===== */
 var NAT=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
 function plug(n){try{return (Capacitor.Plugins&&Capacitor.Plugins[n])||(Capacitor.registerPlugin&&Capacitor.registerPlugin(n))||null}catch(x){return null}}
-var LN=NAT?plug('LocalNotifications'):null,NS={h:20},NTL='',NTT=0,NDAYS=14;
+var LN=NAT?plug('LocalNotifications'):null,NTL='',NTT=0,NDAYS=14;
 
 if(NAT)document.documentElement.classList.add('nat');
-function ntSig(){var u=Object.keys(NM).filter(function(k){return hasHw(NM[k])&&!NM[k].dn}).join(',');return [iso(new Date()),SG,NS.h,u,Object.keys(AB).join(',')].join('|')}
+function ntSig(){var u=Object.keys(NM).filter(function(k){return hasHw(NM[k])&&!NM[k].dn}).join(',');return [iso(new Date()),SG,u,Object.keys(AB).join(',')].join('|')}
 function ntBuild(){
   var out=[],now=Date.now(),t0=new Date(),base0=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()),E0=new Date(2020,0,1),hw={};
   Object.keys(NM).forEach(function(k){var n=NM[k];if(!hasHw(n)||n.dn)return;var o=occ(k);if(!o)return;var ds=iso(o.d),b=base(o.e);(hw[ds]=hw[ds]||[]);if(hw[ds].indexOf(b)<0)hw[ds].push(b)});
