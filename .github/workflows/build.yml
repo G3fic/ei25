@@ -94,6 +94,7 @@ jobs:
                   }
                   String title = call.getString("title", "Сейчас идёт пара");
                   String body = call.getString("body", "");
+                  int progress = Math.max(0, Math.min(100, call.getInt("progress", 0)));
                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                       NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Текущая пара", NotificationManager.IMPORTANCE_LOW);
                       channel.setDescription("Информация о паре, которая идёт сейчас");
@@ -103,7 +104,7 @@ jobs:
                       .setSmallIcon(android.R.drawable.ic_menu_my_calendar)
                       .setContentTitle(title)
                       .setContentText(body.replace("\n", " · "))
-                      .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                      .setProgress(100, progress, false)
                       .setCategory(NotificationCompat.CATEGORY_STATUS)
                       .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                       .setOngoing(true)
