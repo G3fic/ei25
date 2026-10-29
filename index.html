@@ -85,7 +85,7 @@ html{scroll-behavior:smooth}
 .ge.hold.ok::after{background:rgba(217,45,32,.45)}
 @media (prefers-reduced-motion:reduce){.ge.hold::after{transition:transform .8s linear .2s!important}}
 .ge .c.ab{border-color:var(--ac);color:var(--ac);font-weight:700}
-.tdot{position:absolute;left:-7px;top:calc(10px + (100% - 20px) * var(--p,0) - 5px);width:10px;height:10px;box-sizing:border-box;border-radius:50%;background:#22c55e;border:2px solid var(--card);box-shadow:0 0 0 1px rgba(0,0,0,.18),0 0 6px rgba(34,197,94,.7);pointer-events:none;z-index:2;transition:top 1s linear}
+
 .tl{font-size:12px;line-height:1.2;color:var(--mu);font-variant-numeric:tabular-nums}
 .tl .cdn{font-weight:700;color:var(--tx)}
 .cd small{display:block;font-size:10.5px;line-height:1;margin-top:2px;color:var(--ac);font-weight:700}
@@ -220,7 +220,7 @@ html.lk,html.lk2{overflow:hidden}
 </style><script>try{var _t=localStorage.getItem("th");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script></head><body>
 <div class="wkr"><button class="wkb" id="wp" aria-label="Предыдущая неделя">‹</button><div class="wkl" id="wkl"></div><button class="wkb" id="wn" aria-label="Следующая неделя">›</button></div>
 <div id="wl"></div>
-<div class="set" id="set"><div class="sr"><span>Подгруппа</span><div class="sg"><button data-g="1">1</button><button data-g="2">2</button></div></div><div class="sr"><span>Тема</span><div class="sg"><button data-th="auto">Авто</button><button data-th="light">Светлая</button><button data-th="dark">Тёмная</button></div></div><div class="sr nt"><span>ДЗ, час</span><div class="sg"><button data-nh="-1">Выкл</button><button data-nh="19">19</button><button data-nh="20">20</button><button data-nh="21">21</button></div></div><div class="sr"><span>Данные</span><div class="ib"><button class="ic" data-x="exp" title="Экспорт: все ДЗ, пропуски и фото в один JSON" aria-label="Сохранить резервную копию ДЗ, пропусков и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/></svg></button><button class="ic" data-x="imp" title="Импорт и объединение одного или нескольких JSON-файлов" aria-label="Импортировать резервные копии ДЗ, пропусков и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4m0 0L8 8m4-4l4 4M4 17v3h16v-3"/></svg></button><button class="ic" data-x="rst" title="Удерживайте 3 секунды: сбросить пропуски, ДЗ и фото" aria-label="Удерживайте 3 секунды, чтобы сбросить пропуски, ДЗ и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div><input type="file" id="imf" accept=".json,application/json" multiple hidden></div>
+<div class="set" id="set"><div class="sr"><span>Подгруппа</span><div class="sg"><button data-g="1">1</button><button data-g="2">2</button></div></div><div class="sr"><span>Тема</span><div class="sg"><button data-th="light">Светлая</button><button data-th="dark">Тёмная</button></div></div><div class="sr"><span>Данные</span><div class="ib"><button class="ic" data-x="exp" title="Экспорт: все ДЗ, пропуски и фото в один JSON" aria-label="Сохранить резервную копию ДЗ, пропусков и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/></svg></button><button class="ic" data-x="imp" title="Импорт и объединение одного или нескольких JSON-файлов" aria-label="Импортировать резервные копии ДЗ, пропусков и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4m0 0L8 8m4-4l4 4M4 17v3h16v-3"/></svg></button><button class="ic" data-x="rst" title="Удерживайте 3 секунды: сбросить пропуски, ДЗ и фото" aria-label="Удерживайте 3 секунды, чтобы сбросить пропуски, ДЗ и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div><input type="file" id="imf" accept=".json,application/json" multiple hidden></div>
 <div id="cal"></div><div id="hw"></div>
 <div id="nav"><div class="r2"><button id="mc" aria-label="Календарь">📅</button><button id="mh" aria-label="Домашние задания"><span class="bdg" id="mhb"></span>📝</button><div class="g"><button id="mo">Нечёт</button><button id="me">Чёт</button></div><button id="mg" aria-label="Настройки">⚙</button></div></div>
 <div class="mb" id="mb"><div class="ms" id="ms"></div></div>
@@ -362,8 +362,7 @@ function renderCal(){
 
 /* ===== счётчик до конца пары ===== */
 function fmt(ms){var t=Math.max(0,Math.floor(ms/1000)),h=Math.floor(t/3600),m=Math.floor(t%3600/60),c=t%60;return h?h+':'+z(m)+':'+z(c):z(m)+':'+z(c)}
-function updCd(){var dts=document.querySelectorAll('.tdot'),n0=Date.now();for(var j=0;j<dts.length;j++){var s0=+dts[j].getAttribute('data-s'),e0=+dts[j].getAttribute('data-e');dts[j].style.setProperty('--p',Math.max(0,Math.min(1,(n0-s0)/(e0-s0))))}
-  var l=document.querySelectorAll('.cdn'),n=Date.now(),over=false;for(var i=0;i<l.length;i++){var r=+l[i].getAttribute('data-end')-n;if(r<=0)over=true;l[i].textContent=fmt(r)}if(over)tick()}
+function updCd(){var l=document.querySelectorAll('.cdn'),n=Date.now(),over=false;for(var i=0;i<l.length;i++){var r=+l[i].getAttribute('data-end')-n;if(r<=0)over=true;l[i].textContent=fmt(r)}if(over)tick()}
 /* ===== хранилище: заметки (localStorage), файлы (IndexedDB), пропуски ===== */
 var NM={},AB={},DB=null,MEM={files:{}},HOLD=null,PEND=0,M=null,URLS=[],DEL=null,DT=0,TT=0,TXT=0,LT={k:'',t:0};
 try{NM=JSON.parse(localStorage.getItem('nm')||'{}')}catch(x){NM={}}
@@ -828,10 +827,8 @@ var mo=new MutationObserver(sync);mo.observe($('hw'),{attributes:true,attributeF
 var NAT=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
 function plug(n){try{return (Capacitor.Plugins&&Capacitor.Plugins[n])||(Capacitor.registerPlugin&&Capacitor.registerPlugin(n))||null}catch(x){return null}}
 var LN=NAT?plug('LocalNotifications'):null,NS={h:20},NTL='',NTT=0,NDAYS=14;
-try{var _ns=JSON.parse(localStorage.getItem('nt')||'null');if(_ns&&typeof _ns.h=='number')NS.h=_ns.h}catch(x){}
+
 if(NAT)document.documentElement.classList.add('nat');
-function ntSave(){try{localStorage.setItem('nt',JSON.stringify(NS))}catch(x){}}
-function drawNt(){[].forEach.call($('set').querySelectorAll('button[data-nh]'),function(b){b.classList.toggle('on',+b.getAttribute('data-nh')==NS.h)})}
 function ntSig(){var u=Object.keys(NM).filter(function(k){return hasHw(NM[k])&&!NM[k].dn}).join(',');return [iso(new Date()),SG,NS.h,u,Object.keys(AB).join(',')].join('|')}
 function ntBuild(){
   var out=[],now=Date.now(),t0=new Date(),base0=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()),E0=new Date(2020,0,1),hw={};
@@ -850,16 +847,12 @@ async function ntSync(){
 function ntSoon(){if(!LN)return;clearTimeout(NTT);NTT=setTimeout(function(){var g=ntSig();if(g===NTL)return;NTL=g;ntSync()},1200)}
 async function ntEnsure(){if(!LN||NS.h<0)return false;
   try{var pm=await LN.checkPermissions();if(pm.display!=='granted')pm=await LN.requestPermissions();return pm.display==='granted'}catch(x){return false}}
-$('set').addEventListener('click',function(ev){
-  var bh=ev.target.closest('[data-nh]');if(bh)NS.h=+bh.getAttribute('data-nh');else return;
-  ntSave();drawNt();ntEnsure().then(function(){NTL='';ntSoon()})});
 var _render0=render;render=function(){_render0();ntSoon()};
 document.addEventListener('visibilitychange',function(){if(!document.hidden){NTL='';ntSoon()}});
-drawNt();
 if(LN)setTimeout(function(){ntEnsure().then(function(){NTL='';ntSoon()})},1500);
 /* ===== тема ===== */
-var TH='auto';try{TH=localStorage.getItem('th')||'auto'}catch(x){}
-function applyTh(){var r=document.documentElement;if(TH=='light'||TH=='dark')r.setAttribute('data-theme',TH);else r.removeAttribute('data-theme')}
+var TH='light';try{TH=localStorage.getItem('th')||'light'}catch(x){}
+function applyTh(){document.documentElement.setAttribute('data-theme',TH)}
 function drawTh(){[].forEach.call($('set').querySelectorAll('button[data-th]'),function(b){b.classList.toggle('on',b.getAttribute('data-th')==TH)})}
 $('set').addEventListener('click',function(ev){var b=ev.target.closest('[data-th]');if(!b)return;TH=b.getAttribute('data-th');try{localStorage.setItem('th',TH)}catch(x){}applyTh();drawTh()});
 applyTh();drawTh();
