@@ -319,8 +319,10 @@ function classStatusSync(f){
       var nk='next-'+D.indexOf(next.e)+'-'+next.start.getTime();
       if(nk===_classStatusKey&&now.getTime()-_classStatusAt<15000)return;
       _classStatusKey=nk;_classStatusAt=now.getTime();
-      var wait=Math.max(0,Math.ceil((next.start.getTime()-now.getTime())/60000));
-      cs.update({active:true,title:'Следующая пара: '+next.e.t,body:'Перемена · начало в '+hm(next.start)+(wait?' · через '+wait+' мин':''),progress:0,nextAt:next.start.getTime()});
+      var wait=Math.max(0,Math.ceil((next.start.getTime()-now.getTime())/60000)),
+          previousEnd=next.slot>0?new Date(day.getFullYear(),day.getMonth(),day.getDate(),P[next.slot-1][2],P[next.slot-1][3]):null,
+          gapBody=previousEnd?'Перемена по расписанию '+hm(previousEnd)+'–'+hm(next.start)+' · следующая: '+next.e.t+(wait?' · через '+wait+' мин':''):'Перемена · начало в '+hm(next.start)+(wait?' · через '+wait+' мин':'');
+      cs.update({active:true,title:'Следующая пара: '+next.e.t,body:gapBody,progress:0,nextAt:next.start.getTime()});
       return;
     }
 
