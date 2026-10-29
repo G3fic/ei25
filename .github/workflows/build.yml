@@ -81,7 +81,7 @@ jobs:
           @CapacitorPlugin(name = "ClassStatus")
           public class ClassStatusPlugin extends Plugin {
               private static final int NOTIFICATION_ID = 2525;
-              private static final String CHANNEL_ID = "class_live_v2";
+              private static final String CHANNEL_ID = "class_live_v3";
 
               @PluginMethod
               public void update(PluginCall call) {
