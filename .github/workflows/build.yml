@@ -81,7 +81,7 @@ jobs:
           @CapacitorPlugin(name = "ClassStatus")
           public class ClassStatusPlugin extends Plugin {
               private static final int NOTIFICATION_ID = 2525;
-              private static final String CHANNEL_ID = "class_live_v3";
+              private static final String CHANNEL_ID = "class_live_v4";
 
               @PluginMethod
               public void update(PluginCall call) {
@@ -98,7 +98,7 @@ jobs:
                   long nextAt = call.getLong("nextAt", 0L);
                   int progress = Math.max(0, Math.min(100, call.getInt("progress", 0)));
                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                      NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Текущая пара", NotificationManager.IMPORTANCE_HIGH);
+                      NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Текущая пара", NotificationManager.IMPORTANCE_MAX);
                       channel.setDescription("Информация о паре, которая идёт сейчас");
                       manager.createNotificationChannel(channel);
                   }
