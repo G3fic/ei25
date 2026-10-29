@@ -95,6 +95,7 @@ jobs:
                   }
                   String title = call.getString("title", "Сейчас идёт пара");
                   String body = call.getString("body", "");
+                  long nextAt = call.getLong("nextAt", 0L);
                   int progress = Math.max(0, Math.min(100, call.getInt("progress", 0)));
                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                       NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Текущая пара", NotificationManager.IMPORTANCE_HIGH);
@@ -113,7 +114,11 @@ jobs:
                       .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                       .setOngoing(true)
                       .setOnlyAlertOnce(true)
-                      .setShowWhen(false)
+                      .setShowWhen(nextAt > 0)
+                      .setUsesChronometer(nextAt > 0)
+                      .setChronometerCountDown(true)
+                      .setWhen(nextAt > 0 ? nextAt : System.currentTimeMillis())
+                      .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
                       .build();
                   manager.notify(NOTIFICATION_ID, notification);
                   call.resolve();
