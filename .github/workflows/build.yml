@@ -60,6 +60,76 @@ jobs:
           npm install --no-audit --no-fund
           npx cap add android
 
+      - name: Постоянное уведомление о текущей паре
+        run: |
+          mkdir -p android/app/src/main/java/com/ei25/schedule
+          cat > android/app/src/main/java/com/ei25/schedule/ClassStatusPlugin.java <<'EOF'
+          package com.ei25.schedule;
+
+          import android.app.Notification;
+          import android.app.NotificationChannel;
+          import android.app.NotificationManager;
+          import android.content.Context;
+          import android.os.Build;
+          import androidx.core.app.NotificationCompat;
+          import com.getcapacitor.Plugin;
+          import com.getcapacitor.PluginCall;
+          import com.getcapacitor.PluginMethod;
+          import com.getcapacitor.annotation.CapacitorPlugin;
+
+          @CapacitorPlugin(name = "ClassStatus")
+          public class ClassStatusPlugin extends Plugin {
+              private static final int NOTIFICATION_ID = 2525;
+              private static final String CHANNEL_ID = "class_live";
+
+              @PluginMethod
+              public void update(PluginCall call) {
+                  Context context = getContext();
+                  NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                  boolean active = call.getBoolean("active", false);
+                  if (!active) {
+                      manager.cancel(NOTIFICATION_ID);
+                      call.resolve();
+                      return;
+                  }
+                  String title = call.getString("title", "Сейчас идёт пара");
+                  String body = call.getString("body", "");
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                      NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Текущая пара", NotificationManager.IMPORTANCE_LOW);
+                      channel.setDescription("Информация о паре, которая идёт сейчас");
+                      manager.createNotificationChannel(channel);
+                  }
+                  Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                      .setSmallIcon(android.R.drawable.ic_menu_my_calendar)
+                      .setContentTitle(title)
+                      .setContentText(body.replace('\n', ' · '))
+                      .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                      .setCategory(NotificationCompat.CATEGORY_STATUS)
+                      .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                      .setOngoing(true)
+                      .setOnlyAlertOnce(true)
+                      .setShowWhen(false)
+                      .build();
+                  manager.notify(NOTIFICATION_ID, notification);
+                  call.resolve();
+              }
+          }
+          EOF
+          cat > android/app/src/main/java/com/ei25/schedule/MainActivity.java <<'EOF'
+          package com.ei25.schedule;
+
+          import android.os.Bundle;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  registerPlugin(ClassStatusPlugin.class);
+                  super.onCreate(savedInstanceState);
+              }
+          }
+          EOF
+
       - name: Разрешения, иконка, номер версии
         env:
           RUN_NUMBER: ${{ github.run_number }}
