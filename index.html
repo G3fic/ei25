@@ -171,6 +171,7 @@ html.lk,html.lk2{overflow:hidden}
 .set button.on{background:var(--on);color:var(--onx);font-weight:700}
 .set button.ic{background:var(--btn);border-radius:10px;display:grid;place-items:center;padding:0;position:relative;overflow:hidden}
 .set button.ic svg{pointer-events:none;width:19px;height:19px}
+.set button[data-th-toggle]{background:var(--btn);border-radius:10px;font-weight:700;min-height:38px}
 .set button.ic[data-x=rst]{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 .set button.ic[data-x=rst]::after{content:"";position:absolute;inset:0;background:rgba(217,45,32,.6);transform:scaleX(0);transform-origin:left;pointer-events:none}
 .set button.ic[data-x=rst].hold::after{transform:scaleX(1);transition:transform 3s linear}
@@ -853,7 +854,7 @@ if(LN)setTimeout(function(){ntEnsure().then(function(){NTL='';ntSoon()})},1500);
 /* ===== тема ===== */
 var TH='light';try{TH=localStorage.getItem('th')||'light'}catch(x){}
 function applyTh(){document.documentElement.setAttribute('data-theme',TH)}
-function drawTh(){var b=$('set').querySelector('[data-th-toggle]');if(b){b.textContent=TH==='light'?'Светлая тема ☀':'Тёмная тема ☾';b.classList.add('on')}}
+function drawTh(){var b=$('set').querySelector('[data-th-toggle]');if(b){b.textContent=TH==='light'?'☀ Светлая':'☾ Тёмная';b.setAttribute('aria-label','Переключить тему');b.classList.add('on')}}
 $('set').addEventListener('click',function(ev){var b=ev.target.closest('[data-th-toggle]');if(!b)return;TH=TH==='light'?'dark':'light';try{localStorage.setItem('th',TH)}catch(x){}applyTh();drawTh()});
 applyTh();drawTh();
 function closeCal(){$('dpop').classList.remove('open');$('cal').classList.remove('open');$('mc').className='';closeHw()}
