@@ -40,7 +40,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .ge.lv{outline:2px solid #4caf70;outline-offset:1px}
 @media (prefers-color-scheme:dark){.ge.lv{outline-color:#5ec783}}
 .ge .c u{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px}
-#wl{touch-action:pan-y;min-width:0;overflow:visible;backface-visibility:hidden;transform:translateZ(0)}
+#wl{touch-action:pan-y;min-width:0;overflow:visible}
 #nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:560px;z-index:20;background:var(--card);border-top:1px solid var(--bd);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));box-sizing:border-box}
 .r2{display:flex;gap:8px;align-items:center}
 .g{display:flex;flex:1;background:var(--btn);border-radius:12px;padding:3px}
@@ -218,7 +218,7 @@ html.lk,html.lk2{overflow:hidden}
 .iactions{display:flex;gap:8px;margin-top:14px}.iactions button{min-height:44px;border:0;border-radius:12px;padding:0 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}.iactions .icancel{flex:1;background:var(--btn);color:var(--tx)}.iactions .imerge{flex:1.4;background:var(--on);color:var(--onx)}.iactions button:disabled{opacity:.55;cursor:wait}
 .ib-help{font-size:12px;color:var(--mu);margin-top:10px;line-height:1.4}
 @media(prefers-reduced-motion:reduce){.imodal{animation:none}}
-</style><script>try{var _t=localStorage.getItem("th");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script></head><body>
+</style><script>try{var _t=localStorage.getItem("th")||"dark";document.documentElement.setAttribute("data-theme",_t==="light"?"light":"dark")}catch(e){document.documentElement.setAttribute("data-theme","dark")}</script></head><body>
 <div class="wkr"><button class="wkb" id="wp" aria-label="Предыдущая неделя">‹</button><div class="wkl" id="wkl"></div><button class="wkb" id="wn" aria-label="Следующая неделя">›</button></div>
 <div id="wl"></div>
 <div class="set" id="set"><div class="sr"><span>Подгруппа</span><div class="sg"><button data-g="1">1</button><button data-g="2">2</button></div></div><div class="sr"><span>Тема</span><div class="ib"><button type="button" data-th-toggle>Светлая тема</button></div></div><div class="sr"><span>Данные</span><div class="ib"><button class="ic" data-x="exp" title="Экспорт: все ДЗ, пропуски и фото в один JSON" aria-label="Сохранить резервную копию ДЗ, пропусков и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/></svg></button><button class="ic" data-x="imp" title="Импорт и объединение одного или нескольких JSON-файлов" aria-label="Импортировать резервные копии ДЗ, пропусков и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4m0 0L8 8m4-4l4 4M4 17v3h16v-3"/></svg></button><button class="ic" data-x="rst" title="Удерживайте 3 секунды: сбросить пропуски, ДЗ и фото" aria-label="Удерживайте 3 секунды, чтобы сбросить пропуски, ДЗ и фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div></div><input type="file" id="imf" accept=".json,application/json" multiple hidden></div>
@@ -305,7 +305,7 @@ function classStatusSync(f){
     var hours=Math.floor(remaining/60),mins=remaining%60,
         leftText=hours?hours+' ч '+mins+' мин':mins+' мин',
         body='До '+z(p2[2])+':'+z(p2[3])+' · осталось '+leftText;
-    if(inBreak)body='Перемена до '+z(breakEnd.getHours())+':'+z(breakEnd.getMinutes())+' · затем пара';
+    if(inBreak)body='Перемена 5 мин · до '+z(breakEnd.getHours())+':'+z(breakEnd.getMinutes())+' · затем пара';
     cs.update({active:true,title:e.t,body:body,progress:elapsedProgress,nextAt:(inBreak?breakEnd:end).getTime()});
   }catch(x){}
 }
@@ -852,7 +852,7 @@ var _render0=render;render=function(){_render0();ntSoon()};
 document.addEventListener('visibilitychange',function(){if(!document.hidden){NTL='';ntSoon()}});
 if(LN)setTimeout(function(){ntEnsure().then(function(){NTL='';ntSoon()})},1500);
 /* ===== тема ===== */
-var TH='light';try{TH=localStorage.getItem('th')||'light'}catch(x){}
+var TH='dark';try{TH=localStorage.getItem('th')||'dark'}catch(x){}
 function applyTh(){document.documentElement.setAttribute('data-theme',TH)}
 function drawTh(){var b=$('set').querySelector('[data-th-toggle]');if(b){b.textContent=TH==='light'?'☀ Светлая тема':'☾ Тёмная тема';b.setAttribute('aria-label',TH==='light'?'Сейчас светлая тема. Нажмите для тёмной':'Сейчас тёмная тема. Нажмите для светлой');b.classList.add('on')}}
 $('set').addEventListener('click',function(ev){var b=ev.target.closest('[data-th-toggle]');if(!b)return;TH=TH==='light'?'dark':'light';try{localStorage.setItem('th',TH)}catch(x){}applyTh();drawTh()});
