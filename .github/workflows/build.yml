@@ -70,6 +70,7 @@ jobs:
           import android.app.NotificationChannel;
           import android.app.NotificationManager;
           import android.content.Context;
+          import android.graphics.Color;
           import android.os.Build;
           import androidx.core.app.NotificationCompat;
           import com.getcapacitor.Plugin;
@@ -104,6 +105,8 @@ jobs:
                       .setSmallIcon(android.R.drawable.ic_menu_my_calendar)
                       .setContentTitle(title)
                       .setContentText(body.replace("\n", " · "))
+                      .setColor(Color.rgb(34, 197, 94))
+                      .setColorized(true)
                       .setProgress(100, progress, false)
                       .setCategory(NotificationCompat.CATEGORY_STATUS)
                       .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
