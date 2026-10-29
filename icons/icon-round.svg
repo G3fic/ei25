@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Transparent canvas: draw only the calendar, without a circular or square background. -->
-  <g fill="none" stroke="#142b4b" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+  <rect width="512" height="512" rx="104" fill="#FF8A00"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
     <rect x="91" y="116" width="330" height="324" rx="34"/>
     <path d="M92 207H420"/>
     <path d="M177 75V154"/>
     <path d="M335 75V154"/>
   </g>
-  <g fill="#2F80ED">
+  <g fill="#FFFFFF">
     <rect x="139" y="249" width="54" height="54" rx="11"/>
     <rect x="229" y="249" width="54" height="54" rx="11"/>
     <rect x="319" y="249" width="54" height="54" rx="11"/>
