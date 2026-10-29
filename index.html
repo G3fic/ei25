@@ -12,9 +12,9 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171b;--card:#1d2127;--tx:#eef0f3;--mu:#b9c1cf;--bd:#2f353d;--ac:#ff6b5e;--lec:#1b2c47;--pr:#173523;--lab:#3b2a17;--oth:#262b32;--btn:#2d333c;--on:#8fb4ff;--onx:#10151c}}
 :root[data-theme="dark"]{--bg:#14171b;--card:#1d2127;--tx:#eef0f3;--mu:#b9c1cf;--bd:#2f353d;--ac:#ff6b5e;--lec:#1b2c47;--pr:#173523;--lab:#3b2a17;--oth:#262b32;--btn:#2d333c;--on:#8fb4ff;--onx:#10151c}
 html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
-body{touch-action:manipulation;margin:0 auto;max-width:560px;background:var(--bg);color:var(--tx);font:15px/1.4 Arial,Helvetica,sans-serif;padding:10px 10px calc(84px + env(safe-area-inset-bottom,0px))}
+body{touch-action:manipulation;margin:0 auto;max-width:560px;background:var(--bg);color:var(--tx);font:15px/1.4 Arial,Helvetica,sans-serif;padding:0 10px calc(84px + env(safe-area-inset-bottom,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
-.wkr{position:sticky;top:env(safe-area-inset-top,0px);z-index:8;display:flex;align-items:center;gap:8px;min-height:54px;box-sizing:border-box;padding:4px 0;margin:0 0 6px;background:var(--bg)}
+.wkr{position:sticky;top:env(safe-area-inset-top,0px);z-index:18;display:flex;align-items:center;gap:8px;min-height:54px;box-sizing:border-box;padding:4px 0;margin:0 0 6px;background:var(--bg);isolation:isolate}
 .wkl{flex:1;min-width:0;white-space:nowrap;text-align:center;font-weight:700;font-size:20px;margin:0;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .wkb{flex:0 0 46px;width:46px;height:46px;border:0;border-radius:12px;background:var(--btn);color:var(--tx);font:inherit;font-size:28px;line-height:1;padding:0;cursor:pointer;transition:background .2s ease,transform .12s ease,opacity .2s ease}
 .wkb:active{transform:scale(.95)}.wkb:disabled{opacity:.35}
@@ -288,11 +288,32 @@ function classStatusSync(f){
   try{
     var cs=window.Capacitor&&(Capacitor.Plugins&&Capacitor.Plugins.ClassStatus);
     if(!cs||!cs.update)return;
-    var now=new Date(),live=f.live||[],key=live.map(function(e){return D.indexOf(e)}).join(',');
-    if(!live.length){if(_classStatusKey!==''){_classStatusKey='';_classStatusAt=0;cs.update({active:false})}return}
+    var now=new Date(),live=f.live||[],e=live[0];
+    function hm(d){return z(d.getHours())+':'+z(d.getMinutes())}
+    function nextLesson(){
+      var day=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+      var todays=at(day).filter(function(x){return st(x,day)>now}).sort(function(a,b){return a.a-b.a});
+      if(!todays.length)return null;
+      var n=todays[0],start=st(n,day);
+      return start.getTime()-now.getTime()<=90*60000?{e:n,start:start}:null;
+    }
+    if(!e){
+      var nx=nextLesson();
+      if(!nx){
+        if(_classStatusKey!==''){_classStatusKey='';_classStatusAt=0;cs.update({active:false})}
+        return;
+      }
+      var nk='next-'+D.indexOf(nx.e)+'-'+nx.start.getTime();
+      if(nk===_classStatusKey&&now.getTime()-_classStatusAt<30000)return;
+      _classStatusKey=nk;_classStatusAt=now.getTime();
+      var wait=Math.max(0,Math.ceil((nx.start.getTime()-now.getTime())/60000));
+      cs.update({active:true,title:'Следующая пара: '+nx.e.t,body:'Перемена · начало в '+hm(nx.start)+(wait?' · через '+wait+' мин':''),progress:0,nextAt:nx.start.getTime()});
+      return;
+    }
+    var key=live.map(function(x){return D.indexOf(x)}).join(',');
     if(key===_classStatusKey&&now.getTime()-_classStatusAt<30000)return;
     _classStatusKey=key;_classStatusAt=now.getTime();
-    var e=live[0],p2=P[e.b-1],start=st(e,now),end=en(e,now),
+    var p2=P[e.b-1],start=st(e,now),end=en(e,now),
         total=Math.max(1,end.getTime()-start.getTime()),left=Math.max(0,end.getTime()-now.getTime()),
         remaining=Math.max(0,Math.ceil(left/60000)),breakMs=5*60000,
         breakStart=new Date(start.getTime()+Math.max(0,total-breakMs)/2),
@@ -304,9 +325,15 @@ function classStatusSync(f){
         elapsedProgress=Math.max(0,Math.min(100,Math.floor(effectiveElapsed/effectiveTotal*100)));
     var hours=Math.floor(remaining/60),mins=remaining%60,
         leftText=hours?hours+' ч '+mins+' мин':mins+' мин',
-        body='До '+z(p2[2])+':'+z(p2[3])+' · осталось '+leftText;
-    if(inBreak)body='Перемена 5 мин · до '+z(breakEnd.getHours())+':'+z(breakEnd.getMinutes())+' · затем пара';
-    cs.update({active:true,title:e.t,body:body,progress:elapsedProgress,nextAt:(inBreak?breakEnd:end).getTime()});
+        body='До '+z(p2[2])+':'+z(p2[3])+' · осталось '+leftText,
+        nextAt=breakStart.getTime();
+    if(inBreak){
+      body='Перемена 5 мин · до '+hm(breakEnd)+' · затем продолжение пары';
+      nextAt=breakEnd.getTime();
+    }else if(now>=breakEnd){
+      nextAt=end.getTime();
+    }
+    cs.update({active:true,title:e.t,body:body,progress:elapsedProgress,nextAt:nextAt});
   }catch(x){}
 }
 function mark(e,dd){return INF.live.indexOf(e)>-1&&dd&&dd.toDateString()==new Date().toDateString()?' lv':''}
