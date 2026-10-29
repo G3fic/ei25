@@ -854,7 +854,7 @@ if(LN)setTimeout(function(){ntEnsure().then(function(){NTL='';ntSoon()})},1500);
 /* ===== тема ===== */
 var TH='light';try{TH=localStorage.getItem('th')||'light'}catch(x){}
 function applyTh(){document.documentElement.setAttribute('data-theme',TH)}
-function drawTh(){var b=$('set').querySelector('[data-th-toggle]');if(b){b.textContent=TH==='light'?'☀ Светлая':'☾ Тёмная';b.setAttribute('aria-label','Переключить тему');b.classList.add('on')}}
+function drawTh(){var b=$('set').querySelector('[data-th-toggle]');if(b){b.textContent=TH==='light'?'☀ Светлая тема':'☾ Тёмная тема';b.setAttribute('aria-label',TH==='light'?'Сейчас светлая тема. Нажмите для тёмной':'Сейчас тёмная тема. Нажмите для светлой');b.classList.add('on')}}
 $('set').addEventListener('click',function(ev){var b=ev.target.closest('[data-th-toggle]');if(!b)return;TH=TH==='light'?'dark':'light';try{localStorage.setItem('th',TH)}catch(x){}applyTh();drawTh()});
 applyTh();drawTh();
 function closeCal(){$('dpop').classList.remove('open');$('cal').classList.remove('open');$('mc').className='';closeHw()}
