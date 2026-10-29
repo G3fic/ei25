@@ -86,7 +86,7 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){.ge.hold::after{transition:transform .8s linear .2s!important}}
 .ge .c.ab{border-color:var(--ac);color:var(--ac);font-weight:700}
 
-.tl{font-size:12px;line-height:1.2;color:var(--mu);font-variant-numeric:tabular-nums}
+.tl{display:none!important;font-size:12px;line-height:1.2;color:var(--mu);font-variant-numeric:tabular-nums}
 .tl .cdn{font-weight:700;color:var(--tx)}
 .cd small{display:block;font-size:10.5px;line-height:1;margin-top:2px;color:var(--ac);font-weight:700}
 .cr.o .cd.hasabs,.cr.e .cd.hasabs{cursor:pointer}
@@ -834,8 +834,8 @@ function ntSig(){var u=Object.keys(NM).filter(function(k){return hasHw(NM[k])&&!
 function ntBuild(){
   var out=[],now=Date.now(),t0=new Date(),base0=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()),E0=new Date(2020,0,1),hw={};
   Object.keys(NM).forEach(function(k){var n=NM[k];if(!hasHw(n)||n.dn)return;var o=occ(k);if(!o)return;var ds=iso(o.d),b=base(o.e);(hw[ds]=hw[ds]||[]);if(hw[ds].indexOf(b)<0)hw[ds].push(b)});
-  if(NS.h>=0)for(var i=0;i<NDAYS;i++){
-    var d=new Date(base0.getFullYear(),base0.getMonth(),base0.getDate()+i),dn=Math.round((d-E0)/864e5),nx=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1),sj=hw[iso(nx)],ts2=new Date(d.getFullYear(),d.getMonth(),d.getDate(),NS.h,0).getTime();
+  for(var i=0;i<NDAYS;i++){
+    var d=new Date(base0.getFullYear(),base0.getMonth(),base0.getDate()+i),dn=Math.round((d-E0)/864e5),nx=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1),sj=hw[iso(nx)],ts2=new Date(d.getFullYear(),d.getMonth(),d.getDate(),20,0).getTime();
     if(sj&&sj.length&&ts2>now+3000)out.push({id:dn*1000+990,title:'Завтра ДЗ: '+sj.length,body:sj.join(', '),schedule:{at:new Date(ts2),allowWhileIdle:true},channelId:'pairs',smallIcon:'ic_stat_icon',autoCancel:true})}
   return out}
 async function ntChan(){try{await LN.createChannel({id:'pairs',name:'Напоминания о ДЗ',description:'Вечерние уведомления о домашних заданиях',importance:4,visibility:1,vibration:true})}catch(x){}}
@@ -846,7 +846,7 @@ async function ntSync(){
     var pm=await LN.checkPermissions();if(pm.display!=='granted')return;
     await ntChan();var L=ntBuild();if(L.length)await LN.schedule({notifications:L})}catch(x){NTL='';console.error(x)}}
 function ntSoon(){if(!LN)return;clearTimeout(NTT);NTT=setTimeout(function(){var g=ntSig();if(g===NTL)return;NTL=g;ntSync()},1200)}
-async function ntEnsure(){if(!LN||NS.h<0)return false;
+async function ntEnsure(){if(!LN)return false;
   try{var pm=await LN.checkPermissions();if(pm.display!=='granted')pm=await LN.requestPermissions();return pm.display==='granted'}catch(x){return false}}
 var _render0=render;render=function(){_render0();ntSoon()};
 document.addEventListener('visibilitychange',function(){if(!document.hidden){NTL='';ntSoon()}});
