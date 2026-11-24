@@ -25,7 +25,7 @@ jobs:
           java-version: 17
       - name: Prepare Capacitor project
         run: |
-          mkdir -p www android/app/src/main/java/com/ei25/schedule
+          mkdir -p www
           cp index.html www/index.html
           cat > package.json <<'EOF'
           {
@@ -47,6 +47,7 @@ jobs:
           EOF
           npm install --no-audit --no-fund
           npx cap add android
+          mkdir -p android/app/src/main/java/com/ei25/schedule
       - name: Add persistent Android foreground service
         run: |
           cat > android/app/src/main/java/com/ei25/schedule/ClassStatusPlugin.java <<'EOF'
