@@ -1,0 +1,136 @@
+name: Build APK with foreground notification
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '.github/workflows/build-foreground-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Prepare Capacitor project
+        run: |
+          mkdir -p www android/app/src/main/java/com/ei25/schedule
+          cp index.html www/index.html
+          cat > package.json <<'EOF'
+          {
+            "name": "ei25-schedule",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "@capacitor/core": "^6.0.0",
+              "@capacitor/android": "^6.0.0",
+              "@capacitor/local-notifications": "^6.0.0",
+              "@capacitor/filesystem": "^6.0.0",
+              "@capacitor/share": "^6.0.0"
+            },
+            "devDependencies": { "@capacitor/cli": "^6.0.0" }
+          }
+          EOF
+          cat > capacitor.config.json <<'EOF'
+          {"appId":"com.ei25.schedule","appName":"Расписание ЭИ-25","webDir":"www","plugins":{"LocalNotifications":{"smallIcon":"ic_stat_icon","iconColor":"#2F80ED"}}}
+          EOF
+          npm install --no-audit --no-fund
+          npx cap add android
+      - name: Add persistent Android foreground service
+        run: |
+          cat > android/app/src/main/java/com/ei25/schedule/ClassStatusPlugin.java <<'EOF'
+          package com.ei25.schedule;
+          import android.content.Context;
+          import android.content.Intent;
+          import android.os.Build;
+          import androidx.core.content.ContextCompat;
+          import com.getcapacitor.Plugin;
+          import com.getcapacitor.PluginCall;
+          import com.getcapacitor.PluginMethod;
+          import com.getcapacitor.annotation.CapacitorPlugin;
+          @CapacitorPlugin(name = "ClassStatus")
+          public class ClassStatusPlugin extends Plugin {
+            @PluginMethod public void update(PluginCall call) {
+              Context c=getContext();
+              if (!call.getBoolean("active",false)) { c.stopService(new Intent(c,ClassStatusService.class)); call.resolve(); return; }
+              Intent i=new Intent(c,ClassStatusService.class);
+              i.putExtra("title",call.getString("title","Сейчас идёт пара"));
+              i.putExtra("body",call.getString("body",""));
+              i.putExtra("nextAt",call.getLong("nextAt",0L));
+              i.putExtra("progress",call.getInt("progress",0));
+              if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) ContextCompat.startForegroundService(c,i); else c.startService(i);
+              call.resolve();
+            }
+          }
+          EOF
+          cat > android/app/src/main/java/com/ei25/schedule/ClassStatusService.java <<'EOF'
+          package com.ei25.schedule;
+          import android.app.*;
+          import android.content.*;
+          import android.content.pm.ServiceInfo;
+          import android.graphics.Color;
+          import android.os.*;
+          import androidx.core.app.NotificationCompat;
+          public class ClassStatusService extends Service {
+            private static final int ID=2525;
+            private static final String CHANNEL="class_live_v5", PREFS="class_status";
+            @Override public void onCreate(){super.onCreate(); if(Build.VERSION.SDK_INT>=26){NotificationChannel c=new NotificationChannel(CHANNEL,"Текущая пара",NotificationManager.IMPORTANCE_LOW);c.setDescription("Постоянный статус текущей пары и времени до её окончания");c.setShowBadge(false);((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(c);}}
+            @Override public int onStartCommand(Intent i,int flags,int id){
+              if(i!=null)getSharedPreferences(PREFS,0).edit().putString("title",i.getStringExtra("title")).putString("body",i.getStringExtra("body")).putLong("nextAt",i.getLongExtra("nextAt",0L)).putInt("progress",i.getIntExtra("progress",0)).apply();
+              show(); return START_STICKY;
+            }
+            private void show(){
+              android.content.SharedPreferences p=getSharedPreferences(PREFS,0);
+              String title=p.getString("title","Расписание ЭИ-25"), body=p.getString("body","Откройте приложение для обновления статуса");
+              long next=p.getLong("nextAt",0L); int progress=Math.max(0,Math.min(100,p.getInt("progress",0)));
+              Intent launch=getPackageManager().getLaunchIntentForPackage(getPackageName());
+              PendingIntent pi=launch==null?null:PendingIntent.getActivity(this,ID,launch,PendingIntent.FLAG_UPDATE_CURRENT|(Build.VERSION.SDK_INT>=23?PendingIntent.FLAG_IMMUTABLE:0));
+              NotificationCompat.Builder b=new NotificationCompat.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_menu_my_calendar).setContentTitle(title).setContentText(body.replace("\n"," · ")).setColor(Color.rgb(34,197,94)).setColorized(true).setCategory(NotificationCompat.CATEGORY_STATUS).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setOngoing(true).setOnlyAlertOnce(true).setShowWhen(next>0).setProgress(100,progress,false).setContentIntent(pi);
+              if(next>0)b.setUsesChronometer(true).setChronometerCountDown(true).setWhen(next);
+              if(Build.VERSION.SDK_INT>=34)startForeground(ID,b.build(),ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);else startForeground(ID,b.build());
+            }
+            @Override public void onDestroy(){((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(ID);super.onDestroy();}
+            @Override public IBinder onBind(Intent i){return null;}
+          }
+          EOF
+          cat > android/app/src/main/java/com/ei25/schedule/MainActivity.java <<'EOF'
+          package com.ei25.schedule;
+          import android.os.Bundle;
+          import com.getcapacitor.BridgeActivity;
+          public class MainActivity extends BridgeActivity { @Override public void onCreate(Bundle b){registerPlugin(ClassStatusPlugin.class);super.onCreate(b);} }
+          EOF
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/src/main/AndroidManifest.xml')
+          s=p.read_text()
+          perms=['POST_NOTIFICATIONS','SCHEDULE_EXACT_ALARM','USE_EXACT_ALARM','RECEIVE_BOOT_COMPLETED','VIBRATE','WAKE_LOCK','FOREGROUND_SERVICE','FOREGROUND_SERVICE_SPECIAL_USE']
+          add=''.join('    <uses-permission android:name="android.permission.%s" />\n'%x for x in perms)
+          if 'android.permission.FOREGROUND_SERVICE_SPECIAL_USE' not in s: s=s.replace('</manifest>',add+'</manifest>')
+          service='''\n        <service android:name="com.ei25.schedule.ClassStatusService" android:exported="false" android:stopWithTask="false" android:foregroundServiceType="specialUse">\n            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Ongoing notification showing the currently scheduled university class and its end time" />\n        </service>\n''')
+          if 'ClassStatusService' not in s:
+            pos=s.rfind('</application>')
+            if pos<0: raise SystemExit('No application tag in manifest')
+            s=s[:pos]+service+s[pos:]
+          p.write_text(s)
+          PY
+      - name: Sync and build APK
+        run: |
+          npx cap sync android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Raspisanie-EI-25-foreground-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
