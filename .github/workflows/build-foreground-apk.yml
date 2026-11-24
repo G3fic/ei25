@@ -117,7 +117,7 @@ jobs:
           perms=['POST_NOTIFICATIONS','SCHEDULE_EXACT_ALARM','USE_EXACT_ALARM','RECEIVE_BOOT_COMPLETED','VIBRATE','WAKE_LOCK','FOREGROUND_SERVICE','FOREGROUND_SERVICE_SPECIAL_USE']
           add=''.join('    <uses-permission android:name="android.permission.%s" />\n'%x for x in perms)
           if 'android.permission.FOREGROUND_SERVICE_SPECIAL_USE' not in s: s=s.replace('</manifest>',add+'</manifest>')
-          service='''\n        <service android:name="com.ei25.schedule.ClassStatusService" android:exported="false" android:stopWithTask="false" android:foregroundServiceType="specialUse">\n            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Ongoing notification showing the currently scheduled university class and its end time" />\n        </service>\n''')
+          service='''\n        <service android:name="com.ei25.schedule.ClassStatusService" android:exported="false" android:stopWithTask="false" android:foregroundServiceType="specialUse">\n            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Ongoing notification showing the currently scheduled university class and its end time" />\n        </service>\n'''
           if 'ClassStatusService' not in s:
             pos=s.rfind('</application>')
             if pos<0: raise SystemExit('No application tag in manifest')
